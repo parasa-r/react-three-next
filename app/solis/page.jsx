@@ -12,7 +12,7 @@ const Model = ({ activeTexture }) => { // Accept activeTexture as prop
   const gltf = useLoader(GLTFLoader, "./scene.gltf");
 
   // Chargez les textures
-  const texture1 = useLoader(TextureLoader, './textures/wallpaper_sofiia.jpeg');
+  const texture1 = useLoader(TextureLoader, './textures/iPhone-14-Plus-deep-purple.jpg');
   const texture2 = useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg');
 
   const meshRef = useRef();
@@ -21,7 +21,7 @@ const Model = ({ activeTexture }) => { // Accept activeTexture as prop
     if (child.isMesh && child.name === 'Body_Wallpaper_0') {
       child.material.map = activeTexture === 1 ? texture1 : texture2;
      // child.material.roughness = 0.4; // Rendre l'objet moins réfléchissant
-      child.material.roughness = 0.8;
+      child.material.roughness = 2;
      // child.material.emissive = new Color(-0.2, -0.2, -0.2); // Rendre le matériau légèrement lumineux
       child.material.needsUpdate = true;
     }
