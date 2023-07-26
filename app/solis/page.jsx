@@ -27,12 +27,12 @@ const Model = ({ activeTexture }) => { // Accept activeTexture as prop
     }
   });
 
-  useFrame(({ mouse }) => {
+ /* useFrame(({ mouse }) => {
     if (meshRef.current) {
       meshRef.current.rotation.x = mouse.y / 4;  // inclinaison légère sur l'axe x
       meshRef.current.rotation.y = mouse.x / 4 + Math.PI;  // inclinaison légère sur l'axe y
     }
-  });
+  });*/
 
   return (
     <>
