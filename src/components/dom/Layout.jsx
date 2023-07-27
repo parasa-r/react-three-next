@@ -2,8 +2,10 @@
 
 import { useRef, useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-import logoSolis from '../../../public/assets/logo-solis.svg'
+import LogoSolis from '../../../public/assets/logo-solis.svg'
+import LogoSolisDark from '../../../public/assets/logo-solis-dark.svg'
 import DarkModeToggle from '../buttons/DarkModeToggle'
+import Image from 'next/image';
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: false })
 
 const Layout = ({ children }) => {
@@ -47,9 +49,25 @@ const Layout = ({ children }) => {
       ref={ref}
       className="relative w-full h-full overflow-auto touch-action-none"
     >
-      <header className="flex justify-between items-center p-4">
+      <header className="flex justify-between items-center py-4 px-8 bg-white dark:bg-black">
         <div className="flex items-center">
-          <logoSolis />
+          {darkMode ? 
+            <Image
+              priority
+              src={LogoSolisDark} // utilisation du logo sombre en mode sombre
+              alt="Logo Solis Dark"
+              className='h-12 w-12 w-36'
+            /> : 
+            <Image
+              priority
+              src={LogoSolis} // utilisation du logo clair en mode clair
+              alt="Logo Solis"
+              className='h-12 w-36'
+            />
+          }
+          <div className='text-black dark:text-white'>
+            menu1 menu2 menu3
+          </div>
         </div>
         <div className="flex items-center">
           <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
