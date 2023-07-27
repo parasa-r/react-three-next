@@ -3,7 +3,7 @@ import '../../../src/styles/DarkModeToggle.css'
 
 const DarkModeToggle = ({ darkMode, toggleDarkMode }) => {
   return (
-    <>
+    <div className="fixed bottom-4 right-10 z-50">
       <input type="checkbox" id="darkmode-toggle" className="darkmode-toggle sr-only" checked={darkMode} onChange={toggleDarkMode}/>
       <label htmlFor="darkmode-toggle">
         {/* Ici, vous pouvez coller le code SVG pour le soleil et la lune */}
@@ -44,7 +44,7 @@ const DarkModeToggle = ({ darkMode, toggleDarkMode }) => {
        c5.678,11.34,19.522,15.945,30.864,10.268c5.154-2.582,9.136-7.012,11.181-12.357c-5.632,2.427-11.882,2.702-17.752,0.748
        c-6.337-2.108-11.473-6.557-14.463-12.528C11.899,15.541,11.11,10.16,12.002,4.936z"/></svg>
       </label>
-    </>
+    </div>
   );
 };
 

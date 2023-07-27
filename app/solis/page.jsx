@@ -135,8 +135,8 @@ export default function App() {
    <div className="flex flex-col h-full bg-gray-100 overflow-y-auto dark:bg-black" ref={ref}>
       <div className="flex flex-col md:flex-row h-screen items-center">
         <div className="md:w-1/2 p-8">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">We create applications</h1>
-          <p className="text-xl md:text-2xl mb-6">High-end applications for companies that think big - your success is our priority.</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 dark:text-white">We create applications</h1>
+          <p className="text-xl md:text-2xl mb-6 dark:text-white">High-end applications for companies that think big - your success is our priority.</p>
           <button 
             onClick={() => setActiveTexture(prev => (prev === 1 ? 2 : 1))} 
             className="bg-blue-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-blue-600 transition duration-300"
@@ -163,8 +163,8 @@ export default function App() {
 
       {/* New Section: Our story */}
       <div className="flex flex-col items-center py-32 bg-gray-200 z-0">
-        <h2 className="text-5xl font-bold mb-8">Our Story</h2>
-        <p className="text-xl md:text-2xl mb-6 max-w-3xl text-center">From our humble beginnings in a garage to becoming a global leader in application development, our journey has been nothing short of spectacular. We believe in pushing the boundaries of innovation and delivering solutions that make a difference.</p>
+        <h2 className="text-5xl font-bold mb-8 dark:text-white">Our Story</h2>
+        <p className="text-xl md:text-2xl mb-6 max-w-3xl text-center dark:text-white">From our humble beginnings in a garage to becoming a global leader in application development, our journey has been nothing short of spectacular. We believe in pushing the boundaries of innovation and delivering solutions that make a difference.</p>
       </div>
 
     </div>
