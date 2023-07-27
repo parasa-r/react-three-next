@@ -50,10 +50,10 @@ export default function App() {
   const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
 
   return (
-    <div className="flex flex-col md:flex-row h-screen items-center bg-gray-100">
+    <div className="flex flex-col md:flex-row h-screen items-center bg-gray-100 dark:bg-black">
       <div className="md:w-1/2 p-8">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">We create applications</h1>
-        <p className="text-xl md:text-2xl mb-6">High-end applications for companies that think big - your success is our priority.</p>
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 dark:text-white">We create applications</h1>
+        <p className="text-xl md:text-2xl mb-6 dark:text-white">High-end applications for companies that think big - your success is our priority.</p>
         <button 
           onClick={() => setActiveTexture(prev => (prev === 1 ? 2 : 1))} 
           className="bg-blue-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-blue-600 transition duration-300"
