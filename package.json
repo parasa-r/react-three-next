@@ -18,6 +18,9 @@
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^9.0.1",
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@react-three/drei": "^9.77.3",
     "@react-three/fiber": "^8.13.3",
     "@react-three/postprocessing": "^2.15.0",
