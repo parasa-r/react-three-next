@@ -65,7 +65,7 @@ const Layout = ({ children }) => {
               className='h-12 w-36'
             />
           }
-          <div className='text-black dark:text-white'>
+          <div className='text-black dark:text-white ml-4'>
             menu1 menu2 menu3
           </div>
         </div>
