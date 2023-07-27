@@ -6,6 +6,36 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { MeshDistortMaterial } from '@react-three/drei'
 import { Suspense } from "react";
 import { Clock } from 'three';
+import { faSun, faMoon, faStar, faCloud, faTree } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+const texturesData = [
+  {
+    id: 0,
+    title: "Default",
+    icon: faSun,
+    description: "Default Texture",
+    path: './textures/iPhone-14-Plus-deep-purple.jpg',
+  },
+  { id: 1, title: "Texture 1", description: "Description 1", path: "./textures/iPhone-14-Plus-deep-purple.jpg", icon: faSun },
+  { id: 2, title: "Texture 2", description: "Description 2", path: "./textures/Wallpaper_baseColor.jpeg", icon: faStar },
+  { id: 2, title: "Texture 3", description: "Description 3", path: "./textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
+  { id: 2, title: "Texture 4", description: "Description 4", path: "./textures/Wallpaper_baseColor.jpeg", icon: faTree },
+  // ... Ajoutez les autrestextures ici.
+];
+
+const ButtonStyle = "bg-white bg-opacity-70 rounded-lg p-4 m-2 shadow-lg transition duration-200 ease-in-out transform hover:scale-105 hover:bg-opacity-80";
+
+function TextureButton({ texture, setActiveTexture }) {
+  return (
+    <div onClick={() => setActiveTexture(texture.id)} className={ButtonStyle}>
+      <div className="flex items-center mb-2">
+        <FontAwesomeIcon icon={texture.icon} size="2x" className="mr-2" />
+        <h2 className="text-lg font-bold">{texture.title}</h2>
+      </div>
+      <p className="text-sm">{texture.description}</p>
+    </div>
+  );
+}
 
 
 const Loading = () => {
@@ -70,13 +100,18 @@ const texture2 = useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg')
   camera.position.z = -5; 
   camera.lookAt(0, 0, 0); 
 
-  gltf.scene.traverse((child) => {
-    if (child.isMesh && child.name === 'Body_Wallpaper_0') {
-      child.material.map = activeTexture === 1 ? texture1 : texture2;
-      child.material.roughness = 2;
-      child.material.needsUpdate = true;
-    }
-  });
+  useEffect(() => {
+      const textureToApply = useLoader(TextureLoader, texturesData[activeTexture].path);
+
+      gltf.scene.traverse((child) => {
+        if (child.isMesh && child.name === 'Body_Wallpaper_0') {
+          child.material.map = textureToApply;
+          child.material.roughness = 2;
+          child.material.needsUpdate = true;
+        }
+      });
+    }, [activeTexture]);
+
 
   const maxRotation = Math.PI / 4;  
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -104,7 +139,7 @@ const texture2 = useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg')
 
 export default function App() {
   
-  const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
+  const [activeTexture, setActiveTexture] = useState(0); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
   const ref = useRef()
  
@@ -132,20 +167,14 @@ export default function App() {
 }, [handleScroll]);
 
   return (
-   <div className="flex flex-col h-full bg-gray-100 overflow-y-auto" ref={ref}>
-      <div className="flex flex-col md:flex-row h-screen items-center">
+<div className="flex flex-col h-full bg-gray-100 overflow-y-auto">
+      <div className="flex h-screen relative">
         <div className="md:w-1/2 p-8">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">We create applications</h1>
-          <p className="text-xl md:text-2xl mb-6">High-end applications for companies that think big - your success is our priority.</p>
-          <button 
-            onClick={() => setActiveTexture(prev => (prev === 1 ? 2 : 1))} 
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-blue-600 transition duration-300"
-          >
-            Change le background
-          </button>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">We create applications</h1>
+          <p className="text-xl md:text-2xl mb-6 text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
         </div>
-        <div className="md:w-1/2 h-screen">
-          <Canvas className="fixed top-0 left-0 w-full h-screen z-10">
+        <div className="md:w-1/2 h-screen relative">
+          <Canvas className="absolute top-0 left-0 w-full h-screen z-10">
             <ambientLight intensity={2} />
             <pointLight position={[-10, 10, 10]} intensity={1} />
             <pointLight position={[10, 10, 10]} intensity={1} />
@@ -158,6 +187,16 @@ export default function App() {
             </Suspense>
             
           </Canvas>
+          
+          <div className="absolute top-1/4 left-0 w-full flex justify-around z-20">
+            {texturesData.map(texture => (
+              <TextureButton
+                key={texture.id}
+                texture={texture}
+                setActiveTexture={setActiveTexture}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
