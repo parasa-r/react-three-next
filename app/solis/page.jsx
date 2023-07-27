@@ -1,98 +1,124 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from "react"; // Import useState
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react"; // Import useState
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { MeshDistortMaterial } from '@react-three/drei'
 import { Suspense } from "react";
-import { Mesh } from "three";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { TextureLoader, AdditiveBlending, DoubleSide, Color } from "three";
+import { Clock } from 'three';
 
+
+const Loading = () => {
+  return (
+    <mesh visible position={[0, 0, 0]} rotation={[0, 0, 0]}>
+      <sphereGeometry attach="geometry" args={[1, 16, 16]} />
+
+      <meshStandardMaterial attach="material" color="white" transparent opacity={0.6} />
+    </mesh>
+  );
+};
+
+
+import { TextureLoader} from "three";
+const clock = new Clock();
 const Sun = ({ scrollValue }) => {
-
     const meshRef = useRef();
+    
 
-    // Charger la texture
-    const sunTexture = useLoader(TextureLoader, './textures/sun.jpg');
+   useFrame(() => {
+    if (meshRef.current) {
+        meshRef.current.rotation.y += 0.002;
 
-    useFrame(() => {
-        if (meshRef.current) {
-            meshRef.current.rotation.y += 0.002;
+        const time = clock.getElapsedTime();
+        const positions = meshRef.current.geometry.attributes.position;
+        
+        for (let i = 0; i < positions.count; i++) {
+            const px = positions.getX(i);
+            const py = positions.getY(i);
+            const pz = positions.getZ(i);
+
+            const len = Math.sqrt(px*px + py*py + pz*pz);
+            const offset = 0.5 * Math.sin(len + time);
+            
+            const ratio = (3 + offset) / len;
+            positions.setXYZ(i, px*ratio, py*ratio, pz*ratio);
         }
-    });
+
+        positions.needsUpdate = true;
+        meshRef.current.geometry.computeVertexNormals();
+    }
+});
+
 
     return (
-        <mesh ref={meshRef} position={[0, scrollValue * 0.01, 5]} rotation={[0, 0, Math.PI / 2]}>
+        <mesh ref={meshRef} position={[0, scrollValue * 0.005, 5]} rotation={[0, 0, Math.PI / 2]}>
             <sphereBufferGeometry attach="geometry" args={[3, 32, 32]} />
-            <meshStandardMaterial 
-                attach="material" 
-                color="orange" 
-                
-                map={sunTexture}  // Appliquez la texture ici
-            />
+            <MeshDistortMaterial roughness={10} color={'orange'} />
         </mesh>
     );
 };
 
 
 
-
-const Model = ({ activeTexture, scrollValue }) => { // Accept activeTexture as prop
+const Model = ({ activeTexture }) => {
   const gltf = useLoader(GLTFLoader, "./scene.gltf");
-  const { camera, mouse } = useThree();
+  const { camera } = useThree();
 
-  // Chargez les textures
-  const texture1 = useLoader(TextureLoader, './textures/iPhone-14-Plus-deep-purple.jpg');
-  const texture2 = useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg');
+  const texture1 = useMemo(() => useLoader(TextureLoader, './textures/iPhone-14-Plus-deep-purple.jpg'), []);
+const texture2 = useMemo(() => useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg'), []);
 
   const meshRef = useRef();
-  camera.position.z = -5; // Par exemple, ajustez cette valeur selon la taille de votre modèle et votre souhait de proximité.
+  camera.position.z = -5; 
   camera.lookAt(0, 0, 0); 
 
   gltf.scene.traverse((child) => {
     if (child.isMesh && child.name === 'Body_Wallpaper_0') {
       child.material.map = activeTexture === 1 ? texture1 : texture2;
-     // child.material.roughness = 0.4; // Rendre l'objet moins réfléchissant
       child.material.roughness = 2;
-     // child.material.emissive = new Color(-0.2, -0.2, -0.2); // Rendre le matériau légèrement lumineux
       child.material.needsUpdate = true;
     }
   });
 
- //const [isRotatingForward, setIsRotatingForward] = useState(true);
+  const maxRotation = Math.PI / 4;  
+  const [elapsedTime, setElapsedTime] = useState(0);
 
-  const maxRotation = Math.PI / 6;  // 30 degrés en radians
-  const rotationSpeed = 0.01;  // vitesse de rotation
-
-useFrame(() => {
+  useFrame(() => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += rotationSpeed;
+      setElapsedTime((prevTime) => prevTime + 0.001);
 
-      // Adjust position based on scroll value
-      meshRef.current.position.y = -scrollValue * 0.01; // Adjust the multiplier for more or less pronounced effect
+       // Pivoter légèrement sur l'axe X
+      meshRef.current.rotation.z = maxRotation * Math.sin(elapsedTime);
+       meshRef.current.rotation.x = maxRotation * Math.sin(elapsedTime);
+      
+      // Flotter sur l'axe Y
+      //s
+      //meshRef.current.position.y = -scrollValue * 0.01 + 0.2 * Math.sin(elapsedTime);
     }
   });
 
   return (
     <>
-      <primitive ref={meshRef} object={gltf.scene} scale={4}  />
+      <primitive ref={meshRef} object={gltf.scene} scale={4} />
     </>
   );
 };
 
 export default function App() {
+  
   const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
   const ref = useRef()
  
-  // The scroll listener
   const handleScroll = useCallback(() => {
-    if (ref.current) {
-        const currentScrollValue = ref.current.scrollTop;
-        
-        setScrollValue(currentScrollValue);
-    }
-}, [])
+  if (ref.current) {
+    const currentScrollValue = ref.current.scrollTop;
+    window.requestAnimationFrame(() => {
+      setScrollValue(currentScrollValue);
+    });
+  }
+}, []);
+
+
 
   useEffect(() => {
     const div = ref.current;
@@ -121,13 +147,13 @@ export default function App() {
         </div>
         <div className="md:w-1/2 h-screen">
           <Canvas className="fixed top-0 left-0 w-full h-screen z-10">
-            <ambientLight intensity={4} />
+            <ambientLight intensity={2} />
             <pointLight position={[-10, 10, 10]} intensity={1} />
             <pointLight position={[10, 10, 10]} intensity={1} />
             <pointLight position={[-10, -10, 10]} intensity={1}  />
             <pointLight position={[10, -10, 10]} intensity={1} />
     
-            <Suspense fallback={null}>
+            <Suspense fallback={<Loading />}>
               <Sun scrollValue={scrollValue} />
               <Model activeTexture={activeTexture} scrollValue={scrollValue} />
             </Suspense>
