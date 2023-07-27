@@ -8,22 +8,15 @@ import { Suspense } from "react";
 import { Clock } from 'three';
 import { faSun, faMoon, faStar, faCloud, faTree } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 const texturesData = [
-  {
-    id: 0,
-    title: "Default",
-    icon: faSun,
-    description: "Default Texture",
-    path: './textures/iPhone-14-Plus-deep-purple.jpg',
-  },
-  { id: 1, title: "Texture 1", description: "Description 1", path: "./textures/iPhone-14-Plus-deep-purple.jpg", icon: faSun },
-  { id: 2, title: "Texture 2", description: "Description 2", path: "./textures/Wallpaper_baseColor.jpeg", icon: faStar },
-  { id: 2, title: "Texture 3", description: "Description 3", path: "./textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
-  { id: 2, title: "Texture 4", description: "Description 4", path: "./textures/Wallpaper_baseColor.jpeg", icon: faTree },
-  // ... Ajoutez les autrestextures ici.
+  { id: 1, title: "Mobile App", description: "Application \n Development \n Mobile", path: "./textures/iPhone-14-Plus-deep-purple.jpg", icon: faSun },
+  { id: 2, title: "Web App", description: "Description 2", path: "./textures/Wallpaper_baseColor.jpeg", icon: faStar },
+  { id: 3, title: "UI / UX / 3D", description: "Description 3", path: "./textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
+  { id: 4, title: "Advanced AI", description: "Description 4", path: "./textures/Wallpaper_baseColor.jpeg", icon: faTree },
 ];
 
-const ButtonStyle = "bg-white bg-opacity-70 rounded-lg p-4 m-2 shadow-lg transition duration-200 ease-in-out transform hover:scale-105 hover:bg-opacity-80";
+const ButtonStyle = "bg-white bg-opacity-70 rounded-lg p-8 m-2 cursor-pointer shadow-lg transition duration-200 ease-in-out transform hover:scale-105 hover:bg-opacity-80";
 
 function TextureButton({ texture, setActiveTexture }) {
   return (
@@ -101,7 +94,7 @@ const texture2 = useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg')
   camera.lookAt(0, 0, 0); 
 
   useEffect(() => {
-      const textureToApply = useLoader(TextureLoader, texturesData[activeTexture].path);
+      const textureToApply = useLoader(TextureLoader, texturesData[activeTexture - 1].path);
 
       gltf.scene.traverse((child) => {
         if (child.isMesh && child.name === 'Body_Wallpaper_0') {
@@ -139,7 +132,7 @@ const texture2 = useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg')
 
 export default function App() {
   
-  const [activeTexture, setActiveTexture] = useState(0); // 1 for texture1 and 2 for texture2
+  const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
   const ref = useRef()
  
@@ -167,14 +160,14 @@ export default function App() {
 }, [handleScroll]);
 
   return (
-<div className="flex flex-col h-full bg-gray-100 overflow-y-auto">
-      <div className="flex h-screen relative">
-        <div className="md:w-1/2 p-8">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">We create applications</h1>
-          <p className="text-xl md:text-2xl mb-6 text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
-        </div>
-        <div className="md:w-1/2 h-screen relative">
-          <Canvas className="absolute top-0 left-0 w-full h-screen z-10">
+<div className="flex flex-col h-full bg-gray-100 overflow-y-auto dark:bg-black">
+    <div className="flex h-screen relative">
+      <div className="md:w-1/2 p-8 flex flex-col justify-center h-full">
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 text-gray-800 dark:text-white">We create applications</h1>
+        <p className="text-xl md:text-2xl mb-6 text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
+      </div>
+      <div className="md:w-1/2 h-screen relative">
+        <Canvas className="absolute top-0 left-0 w-full h-screen z-10">
             <ambientLight intensity={2} />
             <pointLight position={[-10, 10, 10]} intensity={1} />
             <pointLight position={[10, 10, 10]} intensity={1} />
@@ -187,23 +180,25 @@ export default function App() {
             </Suspense>
             
           </Canvas>
-          
-          <div className="absolute top-1/4 left-0 w-full flex justify-around z-20">
-            {texturesData.map(texture => (
-              <TextureButton
-                key={texture.id}
-                texture={texture}
-                setActiveTexture={setActiveTexture}
-              />
-            ))}
-          </div>
-        </div>
       </div>
+      
+      {/* Buttons placed here */}
+      <div className="absolute top-3/4 right-20 flex space-x-10 z-30  ">
+        {texturesData.map(texture => (
+          <TextureButton
+            key={`text_${texture.id}`}
+            texture={texture}
+            setActiveTexture={setActiveTexture}
+          />
+        ))}
+      </div>
+    </div>
+      
 
       {/* New Section: Our story */}
-      <div className="flex flex-col items-center py-32 bg-gray-200 z-0">
-        <h2 className="text-5xl font-bold mb-8">Our Story</h2>
-        <p className="text-xl md:text-2xl mb-6 max-w-3xl text-center">From our humble beginnings in a garage to becoming a global leader in application development, our journey has been nothing short of spectacular. We believe in pushing the boundaries of innovation and delivering solutions that make a difference.</p>
+      <div className="flex flex-col items-center py-16 md:py-32 bg-gray-200 z-0">
+        <h2 className="text-3xl md:text-5xl font-bold mb-8">Our Story</h2>
+        <p className="text-lg md:text-xl lg:text-2xl mb-6 max-w-3xl text-center">From our humble beginnings in a garage to becoming a global leader in application development, our journey has been nothing short of spectacular. We believe in pushing the boundaries of innovation and delivering solutions that make a difference.</p>
       </div>
 
     </div>
