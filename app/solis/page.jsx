@@ -64,8 +64,8 @@ const Model = ({ activeTexture }) => {
   const gltf = useLoader(GLTFLoader, "./scene.gltf");
   const { camera } = useThree();
 
-  const texture1 = useMemo(() => useLoader(TextureLoader, './textures/iPhone-14-Plus-deep-purple.jpg'), []);
-const texture2 = useMemo(() => useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg'), []);
+ const texture1 = useLoader(TextureLoader, './textures/iPhone-14-Plus-deep-purple.jpg');
+const texture2 = useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg');
 
   const meshRef = useRef();
   camera.position.z = -5; 
