@@ -1,14 +1,45 @@
 'use client';
 
-import React, { useState, useRef } from "react"; // Import useState
+import React, { useState, useRef, useEffect, useCallback } from "react"; // Import useState
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Suspense } from "react";
+import { Mesh } from "three";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { TextureLoader, AdditiveBlending, DoubleSide, Color } from "three";
 
-const Model = ({ activeTexture }) => { // Accept activeTexture as prop
+const Sun = ({ scrollValue }) => {
+
+    const meshRef = useRef();
+
+    // Charger la texture
+    const sunTexture = useLoader(TextureLoader, './textures/sun.jpg');
+
+    useFrame(() => {
+        if (meshRef.current) {
+            meshRef.current.rotation.y += 0.002;
+        }
+    });
+
+    return (
+        <mesh ref={meshRef} position={[0, scrollValue * 0.01, 5]} rotation={[0, 0, Math.PI / 2]}>
+            <sphereBufferGeometry attach="geometry" args={[3, 32, 32]} />
+            <meshStandardMaterial 
+                attach="material" 
+                color="orange" 
+                
+                map={sunTexture}  // Appliquez la texture ici
+            />
+        </mesh>
+    );
+};
+
+
+
+
+const Model = ({ activeTexture, scrollValue }) => { // Accept activeTexture as prop
   const gltf = useLoader(GLTFLoader, "./scene.gltf");
-  const { camera } = useThree();
+  const { camera, mouse } = useThree();
 
   // Chargez les textures
   const texture1 = useLoader(TextureLoader, './textures/iPhone-14-Plus-deep-purple.jpg');
@@ -33,9 +64,12 @@ const Model = ({ activeTexture }) => { // Accept activeTexture as prop
   const maxRotation = Math.PI / 6;  // 30 degrés en radians
   const rotationSpeed = 0.01;  // vitesse de rotation
 
-  useFrame(() => {
+useFrame(() => {
     if (meshRef.current) {
-       meshRef.current.rotation.y += rotationSpeed;
+      meshRef.current.rotation.y += rotationSpeed;
+
+      // Adjust position based on scroll value
+      meshRef.current.position.y = -scrollValue * 0.01; // Adjust the multiplier for more or less pronounced effect
     }
   });
 
@@ -48,32 +82,67 @@ const Model = ({ activeTexture }) => { // Accept activeTexture as prop
 
 export default function App() {
   const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
+  const [scrollValue, setScrollValue] = useState(0);
+  const ref = useRef()
+ 
+  // The scroll listener
+  const handleScroll = useCallback(() => {
+    if (ref.current) {
+        const currentScrollValue = ref.current.scrollTop;
+        
+        setScrollValue(currentScrollValue);
+    }
+}, [])
+
+  useEffect(() => {
+    const div = ref.current;
+    if (div) {
+        div.addEventListener("scroll", handleScroll);
+
+        // Cleanup the event listener on component unmount
+        return () => {
+            div.removeEventListener("scroll", handleScroll);
+        };
+    }
+}, [handleScroll]);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen items-center bg-gray-100">
-      <div className="md:w-1/2 p-8">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">We create applications</h1>
-        <p className="text-xl md:text-2xl mb-6">High-end applications for companies that think big - your success is our priority.</p>
-        <button 
-          onClick={() => setActiveTexture(prev => (prev === 1 ? 2 : 1))} 
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-blue-600 transition duration-300"
-        >
-          Change le background
-        </button>
+   <div className="flex flex-col h-full bg-gray-100 overflow-y-auto" ref={ref}>
+      <div className="flex flex-col md:flex-row h-screen items-center">
+        <div className="md:w-1/2 p-8">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">We create applications</h1>
+          <p className="text-xl md:text-2xl mb-6">High-end applications for companies that think big - your success is our priority.</p>
+          <button 
+            onClick={() => setActiveTexture(prev => (prev === 1 ? 2 : 1))} 
+            className="bg-blue-500 text-white px-6 py-3 rounded-lg mt-4 hover:bg-blue-600 transition duration-300"
+          >
+            Change le background
+          </button>
+        </div>
+        <div className="md:w-1/2 h-screen">
+          <Canvas className="fixed top-0 left-0 w-full h-screen z-10">
+            <ambientLight intensity={4} />
+            <pointLight position={[-10, 10, 10]} intensity={1} />
+            <pointLight position={[10, 10, 10]} intensity={1} />
+            <pointLight position={[-10, -10, 10]} intensity={1}  />
+            <pointLight position={[10, -10, 10]} intensity={1} />
+    
+            <Suspense fallback={null}>
+              <Sun scrollValue={scrollValue} />
+              <Model activeTexture={activeTexture} scrollValue={scrollValue} />
+            </Suspense>
+            
+          </Canvas>
+        </div>
       </div>
-      <div className="md:w-1/2 h-screen">
-        <Canvas className="w-full h-full">
-          <ambientLight intensity={4} />
-          <pointLight position={[-10, 10, 10]} intensity={1} />
-          <pointLight position={[10, 10, 10]} intensity={1} />
-          <pointLight position={[-10, -10, 10]} intensity={1} />
-          <pointLight position={[10, -10, 10]} intensity={1} />
-          <Suspense fallback={null}>
-            <Model activeTexture={activeTexture} />
-          </Suspense>
-          
-        </Canvas>
+
+      {/* New Section: Our story */}
+      <div className="flex flex-col items-center py-32 bg-gray-200 z-0">
+        <h2 className="text-5xl font-bold mb-8">Our Story</h2>
+        <p className="text-xl md:text-2xl mb-6 max-w-3xl text-center">From our humble beginnings in a garage to becoming a global leader in application development, our journey has been nothing short of spectacular. We believe in pushing the boundaries of innovation and delivering solutions that make a difference.</p>
       </div>
+
     </div>
+
   );
 }
