@@ -14,7 +14,7 @@ export const metadata = {
 
 async function getMessages(locale) {
   try {
-    return (await import(`../../../messages/${locale}.json`)).default;
+    return (await import(`../../messages/${locale}.json`)).default;
   } catch (error) {
     console.log("locale : ", locale)
     notFound();

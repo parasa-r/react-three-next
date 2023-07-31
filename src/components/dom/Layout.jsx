@@ -10,7 +10,6 @@ const Layout = ({ children }) => {
   return (
     <div
       ref={ref}
-<<<<<<< Updated upstream
       style={{
         position: 'relative',
         width: ' 100%',
@@ -18,9 +17,6 @@ const Layout = ({ children }) => {
         overflow: 'auto',
         touchAction: 'auto',
       }}
-=======
-      className="relative overflow-auto touch-action-none"
->>>>>>> Stashed changes
     >
       {children}
       <Scene
