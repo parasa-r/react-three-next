@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,6 +15,78 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    
+    overflow: hidden;
   }
+}
+
+@font-face {
+  font-family: 'Museo Sans Rounded';
+  src: url('/fonts/MuseoSansRounded-100.eot');
+  src: local('Museo Sans Rounded 100'), local('MuseoSansRounded-100'),
+    url('/fonts/MuseoSansRounded-100.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/MuseoSansRounded-100.woff2') format('woff2'),
+    url('/fonts/MuseoSansRounded-100.woff') format('woff'),
+    url('/fonts/MuseoSansRounded-100.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Museo Sans Rounded';
+  src: url('/fonts/MuseoSansRounded-300.eot');
+  src: local('Museo Sans Rounded 300'), local('MuseoSansRounded-300'),
+    url('/fonts/MuseoSansRounded-300.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/MuseoSansRounded-300.woff2') format('woff2'),
+    url('/fonts/MuseoSansRounded-300.woff') format('woff'),
+    url('/fonts/MuseoSansRounded-300.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Museo Sans Rounded';
+  src: url('/fonts/MuseoSansRounded-500.eot');
+  src: local('Museo Sans Rounded 500'), local('MuseoSansRounded-500'),
+    url('/fonts/MuseoSansRounded-500.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/MuseoSansRounded-500.woff2') format('woff2'),
+    url('/fonts/MuseoSansRounded-500.woff') format('woff'),
+    url('/fonts/MuseoSansRounded-500.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Museo Sans Rounded';
+  src: url('/fonts/MuseoSansRounded-700.eot');
+  src: local('Museo Sans Rounded 700'), local('MuseoSansRounded-700'),
+    url('/fonts/MuseoSansRounded-700.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/MuseoSansRounded-700.woff2') format('woff2'),
+    url('/fonts/MuseoSansRounded-700.woff') format('woff'),
+    url('/fonts/MuseoSansRounded-700.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Museo Sans Rounded';
+  src: url('/fonts/MuseoSansRounded-900.eot');
+  src: local('Museo Sans Rounded 900'), local('MuseoSansRounded-900'),
+    url('/fonts/MuseoSansRounded-900.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/MuseoSansRounded-900.woff2') format('woff2'),
+    url('/fonts/MuseoSansRounded-900.woff') format('woff'),
+    url('/fonts/MuseoSansRounded-900.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Museo Sans Rounded';
+  src: url('/fonts/MuseoSansRounded-1000.eot');
+  src: local('Museo Sans Rounded 1000'), local('MuseoSansRounded-1000'),
+    url('/fonts/MuseoSansRounded-1000.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/MuseoSansRounded-1000.woff2') format('woff2'),
+    url('/fonts/MuseoSansRounded-1000.woff') format('woff'),
+    url('/fonts/MuseoSansRounded-1000.ttf') format('truetype');
+  font-weight: 1000;
+  font-style: normal;
 }
