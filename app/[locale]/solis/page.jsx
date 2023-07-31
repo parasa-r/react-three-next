@@ -19,14 +19,18 @@ const texturesData = [
 ];
   
 
-const ButtonStyle = "bg-white bg-opacity-50 rounded-4xl p-5 m-2 cursor-pointer transition transition-transform  duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:-translate-y-4 hover:bg-opacity-80 active:bg-blue-600";
+const ButtonStyle = "bg-white bg-opacity-50 dark:bg-opacity-80 rounded-4xl p-5 m-2 cursor-pointer transition transition-transform  duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:-translate-y-4 hover:bg-opacity-80";
 function TextureButton({ texture, setActiveTexture, activeTexture }) {
+
+  const handleClick = (event) => {
+    event.stopPropagation();
+    setActiveTexture(activeTexture === texture.id ? null : texture.id);
+  }
+
   return (
     <div 
-      onClick={() => 
-        setActiveTexture(activeTexture === texture.id ? null : texture.id)
-      } 
-      className={`${ButtonStyle} ${activeTexture === texture.id ? ' bg-orange-400' : ''}`}
+      onClick={handleClick} 
+      className={`${ButtonStyle} ${activeTexture === texture.id ? 'bg-gray-300' : ''}`}
     >
       <div className="flex items-center mb-2">
         <div className="absolute top-5 left-5 w-10 h-10 rounded-full bg-gray-444444 -z-10"></div>
@@ -143,11 +147,27 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 export default function App() {
   const t = useTranslations('Home');
   
-  const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
+  const [activeTexture, setActiveTexture] = useState(null); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
   const ref = useRef()
   const activeTextureData = texturesData.find(texture => texture.id === activeTexture);
 
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    setActiveTexture(null);
+  }
+
+  window.addEventListener('click', handleClickOutside);
+
+  return () => {
+    window.removeEventListener('click', handleClickOutside);
+  }
+}, []);
+
+  const selectedTitle = useMemo(() => {
+    const texture = texturesData.find(t => t.id === activeTexture);
+    return texture ? texture.title : '';
+  }, [activeTexture]);
  
   const handleScroll = useCallback(() => {
   if (ref.current) {
@@ -171,10 +191,10 @@ export default function App() {
 }, [handleScroll]);
 
   return (
-    <div ref={ref} className="flex flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
+    <div ref={ref} className="flex -mt-12 flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
       <div className="flex flex-col md:flex-row h-screen relative">
         <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
-          <h1 className="text-2xl font-museo md:text-4xl lg:text-6xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? t(activeTextureData.mainText) : t('title')}</h1>
+          <h1 className="text-2xl lg:leading-[7.3rem] font-[600] font-museo md:text-4xl lg:text-9xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? t(activeTextureData.mainText) : t('title')}</h1>
           <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
         </div>
         <div className="w-full md:w-1/2 h-half md:h-screen relative">

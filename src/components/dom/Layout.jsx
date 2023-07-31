@@ -49,7 +49,7 @@ const Layout = ({ children }) => {
       ref={ref}
       className="relative overflow-auto touch-action-none"
     >
-      <header className="flex justify-between items-center py-4 px-8 bg-white dark:bg-black">
+      <header className="flex justify-between items-center py-4 px-8 bg-gray-100 dark:bg-black">
         <div className="flex items-center">
           {darkMode ? 
             <Image
