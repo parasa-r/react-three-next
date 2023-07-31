@@ -19,7 +19,7 @@ const texturesData = [
 ];
   
 
-const ButtonStyle = "bg-white bg-opacity-50 dark:bg-opacity-80 rounded-4xl p-5 m-2 cursor-pointer transition transition-transform  duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:-translate-y-4 hover:bg-opacity-80";
+const ButtonStyle = "bg-white button bg-opacity-50 dark:bg-opacity-80 rounded-4xl p-5 m-2 cursor-pointer transition transition-transform  duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:-translate-y-4 hover:bg-opacity-80";
 function TextureButton({ texture, setActiveTexture, activeTexture }) {
 
   const handleClick = (event) => {
@@ -30,7 +30,7 @@ function TextureButton({ texture, setActiveTexture, activeTexture }) {
   return (
     <div 
       onClick={handleClick} 
-      className={`${ButtonStyle} ${activeTexture === texture.id ? 'bg-gray-300' : ''}`}
+      className={`${ButtonStyle} ${activeTexture === texture.id ? 'selected' : 'deselected'}`}
     >
       <div className="flex items-center mb-2">
         <div className="absolute top-5 left-5 w-10 h-10 rounded-full bg-gray-444444 -z-10"></div>

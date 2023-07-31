@@ -90,3 +90,68 @@
   font-weight: 1000;
   font-style: normal;
 }
+
+@keyframes waveEffectIn {
+  0% {
+    transform: translateX(-50%) translateY(-50%) scale(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(-50%) translateY(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes waveEffectOut {
+  0% {
+    transform: translateX(-50%) translateY(-50%) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(-50%) translateY(-50%) scale(0);
+    opacity: 1;
+  }
+}
+
+.button {
+  position: relative;
+  overflow: hidden;
+}
+
+.button.selected::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 700px;
+  /* 200% pour être sûr que le cercle couvre tout le bouton */
+  height: 700px;
+  border-radius: 50%;
+  /* rend l'élément rond */
+  background: #E4E4E4;
+  animation: waveEffectIn 1s forwards;
+  opacity: 1;
+  z-index: -11;
+  --tw-bg-opacity: 0.4;
+  opacity: 0.4;
+}
+
+.button.deselected::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 700px;
+  /* 200% pour être sûr que le cercle couvre tout le bouton */
+  height: 700px;
+  border-radius: 50%;
+  /* rend l'élément rond */
+  background: #E4E4E4;
+  animation: waveEffectOut 1s forwards;
+  opacity: 1;
+  z-index: -11;
+  --tw-bg-opacity: 0.4;
+  opacity: 0.4;
+}
