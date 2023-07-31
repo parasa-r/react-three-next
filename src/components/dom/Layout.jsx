@@ -47,7 +47,7 @@ const Layout = ({ children }) => {
   return (
      <div
       ref={ref}
-      className="relative w-full h-full overflow-auto touch-action-none"
+      className="relative overflow-auto touch-action-none"
     >
       <header className="flex justify-between items-center py-4 px-8 bg-white dark:bg-black">
         <div className="flex items-center">
@@ -65,7 +65,7 @@ const Layout = ({ children }) => {
               className='h-12 w-36'
             />
           }
-          <div className='text-black dark:text-white'>
+          <div className='text-black dark:text-white ml-4'>
             menu1 menu2 menu3
           </div>
         </div>
