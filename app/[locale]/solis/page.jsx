@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react"; // Import useState
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { MeshDistortMaterial } from '@react-three/drei'
+import { MeshDistortMaterial, Environment,AdaptiveDpr, AdaptiveEvents  } from '@react-three/drei'
 import { Suspense } from "react";
 import { Clock } from 'three';
 import { faSun, faMoon, faStar, faCloud, faTree } from '@fortawesome/free-solid-svg-icons';
@@ -191,25 +191,39 @@ export default function App() {
 }, [handleScroll]);
 
   return (
-    <div ref={ref} className="flex -mt-12 flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
+    <div ref={ref} className="flex flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
+      <Canvas 
+    camera={{ fov: 50 }} 
+    style={{
+      width: '100vw',
+      height: '100vh',
+      position: 'fixed',
+      top: 0,
+      zIndex: 20,
+      backgroundColor: 'transparent',
+      transition: 'all 0.3s ease',
+      pointerEvents: 'none'
+    }}
+  >
+    <ambientLight intensity={1.25} />
+    <directionalLight intensity={0.4} />
+    <Suspense fallback={null}>
+      {/*<Sun scrollValue={scrollValue} />*/}
+      <Model activeTexture={activeTexture} scrollValue={scrollValue} />
+    </Suspense>
+    <Environment preset="night" />
+    <AdaptiveDpr pixelated />
+    <AdaptiveEvents />
+    {/* <OrbitControls /> */}
+  </Canvas>
+
       <div className="flex flex-col md:flex-row h-screen relative">
         <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
           <h1 className="text-2xl lg:leading-[7.3rem] font-[600] font-museo md:text-4xl lg:text-9xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? t(activeTextureData.mainText) : t('title')}</h1>
           <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
         </div>
         <div className="w-full md:w-1/2 h-half md:h-screen relative">
-           <Canvas className=" top-0 left-0 w-full h-screen z-10">
-            <ambientLight intensity={2} />
-            <pointLight position={[-10, 10, 10]} intensity={1} />
-            <pointLight position={[10, 10, 10]} intensity={1} />
-            <pointLight position={[-10, -10, 10]} intensity={1}  />
-            <pointLight position={[10, -10, 10]} intensity={1} />
-    
-            <Suspense fallback={<Loading />}>
-              <Sun scrollValue={scrollValue} />
-              <Model activeTexture={activeTexture} scrollValue={scrollValue} />
-            </Suspense>
-            </Canvas>
+          
            </div>
         
         <div className="absolute bottom-4 pt-4 md:bottom-20 right-4 md:right-20 flex space-x-4 md:space-x-10 z-30 overflow-x-auto">
