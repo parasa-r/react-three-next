@@ -17,11 +17,17 @@ const texturesData = [
   { id: 3, title: "UI / UX / 3D", description: "Description 3", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
   { id: 4, title: "Advanced AI", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
 ];
+  
 
-const ButtonStyle = "bg-white bg-opacity-50 rounded-4xl p-5 m-2 cursor-pointer transition duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:scale-105 hover:bg-opacity-80";
-function TextureButton({ texture, setActiveTexture }) {
+const ButtonStyle = "bg-white bg-opacity-50 rounded-4xl p-5 m-2 cursor-pointer transition transition-transform  duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:-translate-y-4 hover:bg-opacity-80 active:bg-blue-600";
+function TextureButton({ texture, setActiveTexture, activeTexture }) {
   return (
-    <div onClick={() => setActiveTexture(texture.id)} className={ButtonStyle}>
+    <div 
+      onClick={() => 
+        setActiveTexture(activeTexture === texture.id ? null : texture.id)
+      } 
+      className={`${ButtonStyle} ${activeTexture === texture.id ? ' bg-orange-400' : ''}`}
+    >
       <div className="flex items-center mb-2">
         <div className="absolute top-5 left-5 w-10 h-10 rounded-full bg-gray-444444 -z-10"></div>
         <div className="w-10 h-10 flex items-center justify-center">
@@ -100,16 +106,18 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
   camera.lookAt(0, 0, 0); 
 
   useEffect(() => {
-      const textureToApply = useLoader(TextureLoader, texturesData[activeTexture - 1].path);
+    if (activeTexture === null) return;
 
-      gltf.scene.traverse((child) => {
-        if (child.isMesh && child.name === 'Body_Wallpaper_0') {
-          child.material.map = textureToApply;
-          child.material.roughness = 2;
-          child.material.needsUpdate = true;
-        }
-      });
-    }, [activeTexture]);
+    const textureToApply = useLoader(TextureLoader, texturesData[activeTexture - 1].path);
+
+    gltf.scene.traverse((child) => {
+      if (child.isMesh && child.name === 'Body_Wallpaper_0') {
+        child.material.map = textureToApply;
+        child.material.roughness = 2;
+        child.material.needsUpdate = true;
+      }
+    });
+  }, [activeTexture]);
 
 
   const maxRotation = Math.PI / 4;  
@@ -142,6 +150,8 @@ export default function App() {
   const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
   const ref = useRef()
+  const activeTextureData = texturesData.find(texture => texture.id === activeTexture);
+
  
   const handleScroll = useCallback(() => {
   if (ref.current) {
@@ -170,7 +180,7 @@ export default function App() {
 <div className="flex flex-col h-full bg-gray-100 overflow-y-auto dark:bg-black">
       <div className="flex flex-col md:flex-row h-screen relative">
         <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
-          <h1 className="text-2xl font-museo md:text-4xl lg:text-6xl font-bold mb-4 text-gray-444444 dark:text-white">We create applications</h1>
+          <h1 className="text-2xl font-museo md:text-4xl lg:text-6xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? activeTextureData.title : 'We create applications'}</h1>
           <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
         </div>
         <div className="w-full md:w-1/2 h-half md:h-screen relative">
@@ -188,12 +198,13 @@ export default function App() {
             </Canvas>
            </div>
         
-        <div className="absolute bottom-4 md:bottom-20 right-4 md:right-20 flex space-x-4 md:space-x-10 z-30 overflow-x-auto">
+        <div className="absolute bottom-4 pt-4 md:bottom-20 right-4 md:right-20 flex space-x-4 md:space-x-10 z-30 overflow-x-auto">
           {texturesData.map(texture => (
             <TextureButton
               key={`text_${texture.id}`}
               texture={texture}
               setActiveTexture={setActiveTexture}
+              activeTexture={activeTexture}
             />
           ))}
         </div>
