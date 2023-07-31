@@ -35,8 +35,6 @@ function TextureButton({ texture, setActiveTexture }) {
   );
 }
 
-
-
 const Loading = () => {
   return (
     <mesh visible position={[0, 0, 0]} rotation={[0, 0, 0]}>
@@ -46,12 +44,10 @@ const Loading = () => {
   );
 };
 
-
 import { TextureLoader} from "three";
 const clock = new Clock();
 const Sun = ({ scrollValue }) => {
     const meshRef = useRef();
-    
 
    useFrame(() => {
     if (meshRef.current) {
@@ -152,8 +148,6 @@ export default function App() {
   }
 }, []);
 
-
-
   useEffect(() => {
     const div = ref.current;
     if (div) {
@@ -167,14 +161,14 @@ export default function App() {
 }, [handleScroll]);
 
   return (
-<div className="flex flex-col h-full bg-gray-100 overflow-y-auto dark:bg-black">
+    <div ref={ref} className="flex flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
       <div className="flex flex-col md:flex-row h-screen relative">
         <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
           <h1 className="text-2xl font-museo md:text-4xl lg:text-6xl font-bold mb-4 text-gray-444444 dark:text-white">We create applications</h1>
           <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
         </div>
         <div className="w-full md:w-1/2 h-half md:h-screen relative">
-           <Canvas className="absolute top-0 left-0 w-full h-screen z-10">
+           <Canvas className=" top-0 left-0 w-full h-screen z-10">
             <ambientLight intensity={2} />
             <pointLight position={[-10, 10, 10]} intensity={1} />
             <pointLight position={[10, 10, 10]} intensity={1} />
@@ -203,7 +197,7 @@ export default function App() {
       {/* New Section: Our story */}
       <div className="flex flex-col items-center py-16 md:py-32 bg-gray-200 z-0">
         <h2 className="text-3xl md:text-5xl font-bold mb-8">Our Story</h2>
-        <p className="text-lg md:text-xl lg:text-2xl mb-6 max-w-3xl text-center">From our humble beginnings in a garage to becoming a global leader in application development, our journey has been nothing short of spectacular. We believe in pushing the boundaries of innovation and delivering solutions that make a difference.</p>
+        <p className="text-lg md:text-xl lg:text-2xl mb-6 max-w-3xl text-center">From our humble beginnings...</p>
       </div>
 
     </div>
