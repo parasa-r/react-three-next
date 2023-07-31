@@ -7,13 +7,15 @@ import { MeshDistortMaterial } from '@react-three/drei'
 import { Suspense } from "react";
 import { Clock } from 'three';
 import { faSun, faMoon, faStar, faCloud, faTree } from '@fortawesome/free-solid-svg-icons';
+
+import {useTranslations} from 'next-intl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const texturesData = [
-  { id: 1, title: "Mobile App", description: "Application \n Development \n Mobile", path: "./textures/iPhone-14-Plus-deep-purple.jpg", icon: faSun },
-  { id: 2, title: "Web App", description: "Description 2", path: "./textures/Wallpaper_baseColor.jpeg", icon: faStar },
-  { id: 3, title: "UI / UX / 3D", description: "Description 3", path: "./textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
-  { id: 4, title: "Advanced AI", description: "Description 4", path: "./textures/Wallpaper_baseColor.jpeg", icon: faTree },
+  { id: 1, title: "Mobile App", description: "Application \n Development \n Mobile", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faSun },
+  { id: 2, title: "Web App", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", icon: faStar },
+  { id: 3, title: "UI / UX / 3D", description: "Description 3", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
+  { id: 4, title: "Advanced AI", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
 ];
 
 const ButtonStyle = "bg-white bg-opacity-50 rounded-4xl p-5 m-2 cursor-pointer transition duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:scale-105 hover:bg-opacity-80";
@@ -87,11 +89,11 @@ const Sun = ({ scrollValue }) => {
 
 
 const Model = ({ activeTexture }) => {
-  const gltf = useLoader(GLTFLoader, "./scene.gltf");
+  const gltf = useLoader(GLTFLoader, "/scene.gltf");
   const { camera } = useThree();
 
- const texture1 = useLoader(TextureLoader, './textures/iPhone-14-Plus-deep-purple.jpg');
-const texture2 = useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg');
+ const texture1 = useLoader(TextureLoader, '/textures/iPhone-14-Plus-deep-purple.jpg');
+const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 
   const meshRef = useRef();
   camera.position.z = -5; 
@@ -135,6 +137,7 @@ const texture2 = useLoader(TextureLoader, './textures/Wallpaper_baseColor.jpeg')
 };
 
 export default function App() {
+  const t = useTranslations('Index');
   
   const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
@@ -165,6 +168,7 @@ export default function App() {
 
   return (
 <div className="flex flex-col h-full bg-gray-100 overflow-y-auto dark:bg-black">
+    <h1>{t('title')}</h1>
     <div className="flex h-screen relative">
       <div className="md:w-1/2 p-8 flex flex-col justify-center h-full">
         <h1 className="text-4xl font-museo font-bold md:text-6xl font-bold mb-4 text-gray-444444 dark:text-white">We create apps</h1>
