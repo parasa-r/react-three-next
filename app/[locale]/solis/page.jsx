@@ -12,10 +12,10 @@ import {useTranslations} from 'next-intl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const texturesData = [
-  { id: 1, title: "Mobile App", description: "Application \n Development \n Mobile", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faSun },
-  { id: 2, title: "Web App", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", icon: faStar },
-  { id: 3, title: "UI / UX / 3D", description: "Description 3", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
-  { id: 4, title: "Advanced AI", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
+  { id: 1, title: "Mobile App", mainText: "website-dev", description: "Application \n Development \n Mobile", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faSun },
+  { id: 2, title: "Web App", mainText: "website-dev", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", icon: faStar },
+  { id: 3, title: "UI / UX / 3D", mainText: "website-dev", description: "Description 3", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
+  { id: 4, title: "Advanced AI", mainText: "website-dev", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
 ];
   
 
@@ -141,7 +141,7 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 };
 
 export default function App() {
-  const t = useTranslations('Index');
+  const t = useTranslations('Home');
   
   const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
@@ -174,7 +174,7 @@ export default function App() {
     <div ref={ref} className="flex flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
       <div className="flex flex-col md:flex-row h-screen relative">
         <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
-          <h1 className="text-2xl font-museo md:text-4xl lg:text-6xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? activeTextureData.title : 'We create applications'}</h1>
+          <h1 className="text-2xl font-museo md:text-4xl lg:text-6xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? t(activeTextureData.mainText) : t('title')}</h1>
           <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
         </div>
         <div className="w-full md:w-1/2 h-half md:h-screen relative">

@@ -1,5 +1,10 @@
 {
   "Index": {
     "title": "Hello world!"
+  },
+  "Home": {
+    "title": "We create Apps !",
+    "website": "Website",
+    "website-dev": "Website development"
   }
 }
