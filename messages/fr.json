@@ -1,0 +1,16 @@
+{
+  "greeting": "Bonjour",
+  "welcome_message": "Bienvenue sur notre site Web",
+  "navigation": {
+    "home": "Accueil",
+    "about_us": "À propos de nous",
+    "contact": "Contactez-nous"
+  },
+  "footer": {
+    "terms_of_service": "Conditions de service",
+    "privacy_policy": "Politique de confidentialité"
+  },
+  "Index": {
+    "title": "Hello le monde!"
+  }
+}
