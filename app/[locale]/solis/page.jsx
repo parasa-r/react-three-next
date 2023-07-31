@@ -18,16 +18,19 @@ const texturesData = [
   { id: 4, title: "Advanced AI", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
 ];
 
-const ButtonStyle = "bg-white bg-opacity-70 rounded-lg p-4 md:p-8 m-2 cursor-pointer shadow-lg transition duration-200 ease-in-out transform hover:scale-105 hover:bg-opacity-80";
-
+const ButtonStyle = "bg-white bg-opacity-50 rounded-4xl p-5 m-2 cursor-pointer transition duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:scale-105 hover:bg-opacity-80";
 function TextureButton({ texture, setActiveTexture }) {
   return (
     <div onClick={() => setActiveTexture(texture.id)} className={ButtonStyle}>
       <div className="flex items-center mb-2">
-        <FontAwesomeIcon icon={texture.icon} size="lg" className="mr-2" />
-        <h2 className="text-sm md:text-lg font-bold">{texture.title}</h2>
+        <div className="absolute top-5 left-5 w-10 h-10 rounded-full bg-gray-444444 -z-10"></div>
+        <div className="w-10 h-10 flex items-center justify-center">
+          <FontAwesomeIcon icon={texture.icon} size="1x" className=" absolute mr-0 text-white  ml-0 mt-0 text-[1rem]" />
+        </div>
+        
+        <h2 className="text-lg ml-2 font-sans text-neutral-600 font-[600]">{texture.title}</h2>
       </div>
-      <p className="text-xs md:text-sm">{texture.description}</p>
+      <p className="font-sans text-sm text-neutral-600">{texture.description}</p>
     </div>
   );
 }
