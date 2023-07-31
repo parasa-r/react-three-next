@@ -18,23 +18,20 @@ const texturesData = [
   { id: 4, title: "Advanced AI", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
 ];
 
-const ButtonStyle = "bg-white bg-opacity-50 rounded-4xl p-5 m-2 cursor-pointer transition duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:scale-105 hover:bg-opacity-80";
+const ButtonStyle = "bg-white bg-opacity-70 rounded-lg p-4 md:p-8 m-2 cursor-pointer shadow-lg transition duration-200 ease-in-out transform hover:scale-105 hover:bg-opacity-80";
 
 function TextureButton({ texture, setActiveTexture }) {
   return (
     <div onClick={() => setActiveTexture(texture.id)} className={ButtonStyle}>
       <div className="flex items-center mb-2">
-        <div className="absolute top-5 left-5 w-10 h-10 rounded-full bg-gray-444444 -z-10"></div>
-        <div className="w-10 h-10 flex items-center justify-center">
-          <FontAwesomeIcon icon={texture.icon} size="1x" className=" absolute mr-0 text-white  ml-0 mt-0 text-[1rem]" />
-        </div>
-        
-        <h2 className="text-lg ml-2 font-sans text-neutral-600 font-[600]">{texture.title}</h2>
+        <FontAwesomeIcon icon={texture.icon} size="lg" className="mr-2" />
+        <h2 className="text-sm md:text-lg font-bold">{texture.title}</h2>
       </div>
-      <p className="font-sans text-sm text-neutral-600">{texture.description}</p>
+      <p className="text-xs md:text-sm">{texture.description}</p>
     </div>
   );
 }
+
 
 
 const Loading = () => {
@@ -168,14 +165,13 @@ export default function App() {
 
   return (
 <div className="flex flex-col h-full bg-gray-100 overflow-y-auto dark:bg-black">
-    <h1>{t('title')}</h1>
-    <div className="flex h-screen relative">
-      <div className="md:w-1/2 p-8 flex flex-col justify-center h-full">
-        <h1 className="text-4xl font-museo font-bold md:text-6xl font-bold mb-4 text-gray-444444 dark:text-white">We create apps</h1>
-        <p className="text-xl md:text-2xl mb-6 text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
-      </div>
-      <div className="md:w-1/2 h-screen relative">
-        <Canvas className="absolute top-0 left-0 w-full h-screen z-10">
+      <div className="flex flex-col md:flex-row h-screen relative">
+        <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
+          <h1 className="text-2xl font-museo md:text-4xl lg:text-6xl font-bold mb-4 text-gray-444444 dark:text-white">We create applications</h1>
+          <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
+        </div>
+        <div className="w-full md:w-1/2 h-half md:h-screen relative">
+           <Canvas className="absolute top-0 left-0 w-full h-screen z-10">
             <ambientLight intensity={2} />
             <pointLight position={[-10, 10, 10]} intensity={1} />
             <pointLight position={[10, 10, 10]} intensity={1} />
@@ -186,21 +182,19 @@ export default function App() {
               <Sun scrollValue={scrollValue} />
               <Model activeTexture={activeTexture} scrollValue={scrollValue} />
             </Suspense>
-            
-          </Canvas>
+            </Canvas>
+           </div>
+        
+        <div className="absolute bottom-4 md:bottom-20 right-4 md:right-20 flex space-x-4 md:space-x-10 z-30 overflow-x-auto">
+          {texturesData.map(texture => (
+            <TextureButton
+              key={`text_${texture.id}`}
+              texture={texture}
+              setActiveTexture={setActiveTexture}
+            />
+          ))}
+        </div>
       </div>
-      
-      {/* Buttons placed here */}
-      <div className="absolute top-3/4 right-20 flex space-x-10 z-30  ">
-        {texturesData.map(texture => (
-          <TextureButton
-            key={`text_${texture.id}`}
-            texture={texture}
-            setActiveTexture={setActiveTexture}
-          />
-        ))}
-      </div>
-    </div>
       
 
       {/* New Section: Our story */}
