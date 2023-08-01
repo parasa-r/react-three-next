@@ -6,7 +6,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { MeshDistortMaterial, Environment,AdaptiveDpr, AdaptiveEvents  } from '@react-three/drei'
 import { Suspense } from "react";
 import { Clock } from 'three';
-import { faSun, faMoon, faStar, faCloud, faTree } from '@fortawesome/free-solid-svg-icons';
+import { gsap } from "gsap";
+import { faSun, faMoon, faStar, faTree } from '@fortawesome/free-solid-svg-icons';
 
 import {useTranslations} from 'next-intl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -44,15 +45,6 @@ function TextureButton({ texture, setActiveTexture, activeTexture }) {
     </div>
   );
 }
-
-const Loading = () => {
-  return (
-    <mesh visible position={[0, 0, 0]} rotation={[0, 0, 0]}>
-      <sphereGeometry attach="geometry" args={[1, 16, 16]} />
-      <meshBasicMaterial  color="orange" transparent opacity={0.9} />
-    </mesh>
-  );
-};
 
 import { TextureLoader} from "three";
 const clock = new Clock();
@@ -92,9 +84,7 @@ const Sun = ({ scrollValue }) => {
     );
 };
 
-
-
-const Model = ({ activeTexture }) => {
+const Model = ({ activeTexture, scrollValue, mousePosition, isMouseWithinFirstSection }) => {
   const gltf = useLoader(GLTFLoader, "/scene.gltf");
   const { camera } = useThree();
 
@@ -104,6 +94,24 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
   const meshRef = useRef();
   camera.position.z = -5; 
   camera.lookAt(0, 0, 0); 
+
+  useEffect(() => {
+    if (isMouseWithinFirstSection && meshRef.current) {
+      gsap.to(meshRef.current.rotation, {
+        x: mousePosition.y * 0.5,
+        y: mousePosition.x * 0.5,
+        duration: 0.5
+      });
+    }
+  }, [mousePosition, isMouseWithinFirstSection]);
+
+  useEffect(() => {
+    if (!meshRef.current) return;
+
+    const rotationValue = gsap.utils.mapRange(0, 1000, 0, Math.PI, scrollValue);
+    gsap.to(meshRef.current.rotation, { y: rotationValue, duration: 0.5 });
+
+  }, [scrollValue]);
 
   useEffect(() => {
     if (activeTexture === null) return;
@@ -119,27 +127,10 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
     });
   }, [activeTexture]);
 
-
-  const maxRotation = Math.PI / 4;  
-  const [elapsedTime, setElapsedTime] = useState(0);
-
-  useFrame(() => {
-    if (meshRef.current) {
-      setElapsedTime((prevTime) => prevTime + 0.001);
-
-       // Pivoter légèrement sur l'axe X
-      meshRef.current.rotation.z = maxRotation * Math.sin(elapsedTime);
-       meshRef.current.rotation.x = maxRotation * Math.sin(elapsedTime);
-      
-      // Flotter sur l'axe Y
-      //s
-      //meshRef.current.position.y = -scrollValue * 0.01 + 0.2 * Math.sin(elapsedTime);
-    }
-  });
-
   return (
     <>
-      <primitive ref={meshRef} object={gltf.scene} scale={4} />
+      <primitive ref={meshRef} object={gltf.scene} position={[-2, 0, 0]} scale={4} />
+
     </>
   );
 };
@@ -149,6 +140,14 @@ export default function App() {
   
   const [activeTexture, setActiveTexture] = useState(null); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
+  const [opacity, setOpacity] = useState(1);
+  const buttonGroupRef = useRef(null);
+
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMouseWithinFirstSection, setMouseWithinFirstSection] = useState(false);
+
+
+
   const ref = useRef()
   const activeTextureData = texturesData.find(texture => texture.id === activeTexture);
 
@@ -164,36 +163,62 @@ export default function App() {
   }
 }, []);
 
+useEffect(() => {
+  const handleMouseMove = (e) => {
+    
+    if (scrollValue === 0) {
+      setMouseWithinFirstSection(true);
+
+      const xRatio = (e.clientX / window.innerWidth) - 0.5;
+      const yRatio = (e.clientY / window.innerHeight) - 0.5;
+      setMousePosition({ x: xRatio, y: yRatio });
+    } else {
+      setMouseWithinFirstSection(false);
+    }
+  };
+
+  window.addEventListener('mousemove', handleMouseMove);
+
+  return () => {
+    window.removeEventListener('mousemove', handleMouseMove);
+  };
+}, [scrollValue]);
+
   const selectedTitle = useMemo(() => {
     const texture = texturesData.find(t => t.id === activeTexture);
     return texture ? texture.title : '';
   }, [activeTexture]);
- 
-  const handleScroll = useCallback(() => {
-  if (ref.current) {
-    const currentScrollValue = ref.current.scrollTop;
-    window.requestAnimationFrame(() => {
-      setScrollValue(currentScrollValue);
-    });
+
+ useEffect(() => {
+  const currentRef = ref.current;
+  const handleScroll = () => {
+    if (currentRef) {
+      let scrollY = currentRef.scrollTop;
+      let height = currentRef.scrollHeight - currentRef.clientHeight;
+      let scrolled = height > 0 ? scrollY / height : 0;
+
+      setOpacity(1 - scrolled); // cela réduit l'opacité à mesure que vous défilez vers le bas
+       setScrollValue(currentRef.scrollTop);
+    }
+  };
+
+  if (currentRef) {
+    currentRef.addEventListener('scroll', handleScroll);
   }
+
+  return () => {
+    if (currentRef) {
+      currentRef.removeEventListener('scroll', handleScroll);
+    }
+  };
 }, []);
 
-  useEffect(() => {
-    const div = ref.current;
-    if (div) {
-        div.addEventListener("scroll", handleScroll);
-
-        // Cleanup the event listener on component unmount
-        return () => {
-            div.removeEventListener("scroll", handleScroll);
-        };
-    }
-}, [handleScroll]);
+ 
 
   return (
     <div ref={ref} className="flex flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
       <Canvas 
-    camera={{ fov: 50 }} 
+    camera={{ fov: 60 }} 
     style={{
       width: '100vw',
       height: '100vh',
@@ -209,7 +234,8 @@ export default function App() {
     <directionalLight intensity={0.4} />
     <Suspense fallback={null}>
       {/*<Sun scrollValue={scrollValue} />*/}
-      <Model activeTexture={activeTexture} scrollValue={scrollValue} />
+      
+      <Model activeTexture={activeTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
     </Suspense>
     <Environment preset="night" />
     <AdaptiveDpr pixelated />
@@ -226,7 +252,7 @@ export default function App() {
           
            </div>
         
-        <div className="absolute bottom-4 pt-4 md:bottom-20 right-4 md:right-20 flex space-x-4 md:space-x-10 z-30 overflow-x-auto">
+        <div ref={buttonGroupRef} style={{ opacity: opacity }} className="absolute bottom-4 pt-4 md:bottom-20 right-4 md:right-20 flex space-x-4 md:space-x-10 z-30 overflow-x-auto">
           {texturesData.map(texture => (
             <TextureButton
               key={`text_${texture.id}`}
