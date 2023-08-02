@@ -96,32 +96,21 @@ const Sun = ({ scrollValue }) => {
     );
 };
 
-const IMacModel = ({mousePosition, modelPositionY}) => {
+const IMacModel = ({mousePosition, modelPositionY, scrollValue}) => {
   const gltf = useLoader(GLTFLoader, "/imac_2021/scene.gltf");
   const meshRef = useRef(); 
 
-   // Effet parallaxe
-  useEffect(() => {
-    gsap.to(meshRef.current.position, {
-      x: mousePosition.x * 10,  // Ajustez ces valeurs selon l'effet souhaité
-      y: mousePosition.y * 2,
-      duration: 0.5,
-      ease: "power2.out"
-    });
-  }, [mousePosition]);
-
-  // Effet de défilement
-  useEffect(() => {
-    gsap.to(meshRef.current.position, {
-      y: modelPositionY * 0.5, // Ajustez ce multiplicateur en fonction de vos besoins
-      duration: 0.5,
-      ease: "power2.out"
-    });
-  }, [modelPositionY]);
-
+   useFrame(() => {
+    if (meshRef.current) {
+      // Pour s'assurer que l'iMac reste à sa position, compensez la valeur de défilement.
+      // Vous pouvez ajuster le multiplicateur 0.005 en fonction de vos besoins.
+      //console.log('hare', meshRef.current.position.y)
+      meshRef.current.position.y = -100 + scrollValue * 0.5;
+    }
+  });
 
   return (
-    <primitive ref={meshRef} object={gltf.scene} position={[0, 100, 300]} rotation={[0, Math.PI/2, 0]} scale={2} />
+    <primitive ref={meshRef} object={gltf.scene} position={[-200, -100, 300]} rotation={[0, 1.75, 0]} scale={3} />
   );
 };
 
@@ -180,21 +169,15 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 
 export default function App() {
   const t = useTranslations('Home');
-  
   const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
   const [opacity, setOpacity] = useState(1);
   const buttonGroupRef = useRef(null);
   const [modelPositionY, setModelPositionY] = useState(0);
-    const sectionRef = useRef(null);
+  const sectionRef = useRef(null);
   const [isInteracting, setIsInteracting] = useState(false);
-
-
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMouseWithinFirstSection, setMouseWithinFirstSection] = useState(false);
-
-
-
   const ref = useRef()
   const activeTextureData = texturesData.find(texture => texture.id === activeTexture);
 
@@ -228,12 +211,10 @@ export default function App() {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, [scrollValue]);
-
   const selectedTitle = useMemo(() => {
     const texture = texturesData.find(t => t.id === activeTexture);
     return texture ? texture.title : '';
   }, [activeTexture]);
-
   useEffect(() => {
     const currentRef = ref.current;
     const handleScroll = () => {
@@ -246,11 +227,9 @@ export default function App() {
         setScrollValue(currentRef.scrollTop);
       }
     };
-
     if (currentRef) {
       currentRef.addEventListener('scroll', handleScroll);
     }
-
     if (sectionRef.current) {
       const sectionTop = sectionRef.current.getBoundingClientRect().top;
       const sectionBottom = sectionRef.current.getBoundingClientRect().bottom;
@@ -260,57 +239,46 @@ export default function App() {
         setModelPositionY(-sectionTop); // La valeur de déplacement est la distance du haut de la section à la vue du navigateur
       }
     }
-
-
     return () => {
       if (currentRef) {
         currentRef.removeEventListener('scroll', handleScroll);
       }
     };
   }, []);
-
- 
-
   return (
     <div ref={ref} className="flex flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
       <Canvas 
-    camera={{ fov: 80 }} 
-    style={{
-      width: '100vw',
-      height: '100vh',
-      position: 'fixed',
-      top: 0,
-      zIndex: 20,
-      backgroundColor: 'transparent',
-      transition: 'all 0.3s ease',
-      pointerEvents: 'none'
-    }}
-  >
-    <ambientLight intensity={1.25} />
-    <directionalLight intensity={0.4} />
-    <Suspense fallback={null}>
-      {/*<Sun scrollValue={scrollValue} />*/}
-      
-      <Model activeTexture={activeTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
-      <IMacModel mousePosition={mousePosition} scrollValue={scrollValue} modelPositionY={modelPositionY}/>
-    </Suspense>
-    <Environment preset="night" />
-    <AdaptiveDpr pixelated />
-    <AdaptiveEvents />
-    {/* <OrbitControls /> */}
-  </Canvas>
-
-  
-
+        camera={{ fov: 80 }} 
+        style={{
+          width: '100vw',
+          height: '100vh',
+          position: 'fixed',
+          top: 0,
+          zIndex: 20,
+          backgroundColor: 'transparent',
+          transition: 'all 0.3s ease',
+          pointerEvents: 'none'
+        }}
+      >
+        <ambientLight intensity={1.25} />
+        <directionalLight intensity={0.4} />
+        <Suspense fallback={null}>
+          {/*<Sun scrollValue={scrollValue} />*/}
+          <Model activeTexture={activeTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
+          <IMacModel mousePosition={mousePosition} scrollValue={scrollValue} modelPositionY={modelPositionY}/>
+        </Suspense>
+        <Environment preset="night" />
+        <AdaptiveDpr pixelated />
+        <AdaptiveEvents />
+        {/* <OrbitControls /> */}
+      </Canvas>
       <div className="flex flex-col md:flex-row h-screen relative" ref={sectionRef}>
         <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
           <h1 className="text-2xl lg:leading-[7.3rem] font-[600] font-museo md:text-4xl lg:text-9xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? t(activeTextureData.mainText) : <></>}</h1>
           <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
         </div>
-        <div className="w-full md:w-1/2 h-half md:h-screen relative">
-          
-           </div>
-        
+        <div className="w-full md:w-1/2 h-half md:h-screen relative">       
+        </div>
         <div ref={buttonGroupRef} style={{ opacity: opacity }} className="absolute bottom-4 pt-4 md:bottom-20 right-4 md:right-20 flex space-x-4 md:space-x-10 z-30 overflow-x-auto">
           {texturesData.map(texture => (
             <TextureButton
@@ -323,15 +291,11 @@ export default function App() {
           ))}
         </div>
       </div>
-      
-
       {/* New Section: Our story */}
       <div className="flex flex-col items-center py-16 md:py-32 bg-gray-200 z-0">
         <h2 className="text-3xl md:text-5xl font-bold mb-8">Our Story</h2>
         <p className="text-lg md:text-xl lg:text-2xl mb-6 max-w-3xl text-center">From our humble beginnings...</p>
       </div>
-
     </div>
-
   );
 }
