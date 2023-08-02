@@ -155,3 +155,37 @@
   --tw-bg-opacity: 0.4;
   opacity: 0.4;
 }
+
+.container {
+  position: relative;
+}
+
+.cover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  color: #fff;
+  font-size: 3em;
+  animation: fadeOut 2s forwards;
+  z-index: 2;
+}
+
+.hide {
+  display: none;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
