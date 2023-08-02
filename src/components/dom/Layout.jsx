@@ -6,6 +6,8 @@ import LogoSolis from '../../../public/assets/logo-solis.svg'
 import LogoSolisDark from '../../../public/assets/logo-solis-dark.svg'
 import DarkModeToggle from '../buttons/DarkModeToggle'
 import Image from 'next/image';
+import Curtain from '../anim/Curtain'
+
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: false })
 
 const Layout = ({ children }) => {
@@ -22,10 +24,9 @@ const Layout = ({ children }) => {
         setDarkMode(false);
         document.documentElement.classList.remove('dark');
       }
-    } else if (window.matchMedia('(dark-mode: dark)').matches) {
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setDarkMode(true);
       document.documentElement.classList.add('dark');
-
     } else {
       setDarkMode(false);
       document.documentElement.classList.remove('dark');
@@ -49,6 +50,7 @@ const Layout = ({ children }) => {
       ref={ref}
       className="relative overflow-auto touch-action-none"
     >
+      <Curtain darkMode={darkMode}/>
       <header className="flex justify-between items-center py-4 px-8 bg-gray-100 dark:bg-black">
         <div className="flex items-center">
           {darkMode ? 

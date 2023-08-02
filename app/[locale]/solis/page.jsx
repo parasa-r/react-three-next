@@ -8,30 +8,42 @@ import { Suspense } from "react";
 import { Clock } from 'three';
 import { gsap } from "gsap";
 import { faSun, faMoon, faStar, faTree } from '@fortawesome/free-solid-svg-icons';
+import Curtain from "@/components/anim/Curtain";
 
 import {useTranslations} from 'next-intl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const texturesData = [
   { id: 1, title: "Mobile App", mainText: "website-dev", description: "Application \n Development \n Mobile", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faSun },
-  { id: 2, title: "Web App", mainText: "website-dev", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", icon: faStar },
-  { id: 3, title: "UI / UX / 3D", mainText: "website-dev", description: "Description 3", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
-  { id: 4, title: "Advanced AI", mainText: "website-dev", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
+  { id: 2, title: "Web App", mainText: "webapp-dev", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", icon: faStar },
+  { id: 3, title: "UI / UX / 3D", mainText: "uiux3d-dev", description: "Description 3", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
+  { id: 4, title: "Advanced AI", mainText: "ai-dev", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
 ];
   
 
 const ButtonStyle = "bg-white button bg-opacity-50 dark:bg-opacity-80 rounded-4xl p-5 m-2 cursor-pointer transition transition-transform  duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:-translate-y-4 hover:bg-opacity-80";
-function TextureButton({ texture, setActiveTexture, activeTexture }) {
+function TextureButton({ texture, setActiveTexture, activeTexture, setIsInteracting }) {
+  let isMoovement = false;
+
 
   const handleClick = (event) => {
     event.stopPropagation();
-    setActiveTexture(activeTexture === texture.id ? null : texture.id);
+    setActiveTexture(texture.id);
+    setIsInteracting(true); 
+    isMoovement = true;
+  }
+  
+  let buttonClasses = `${ButtonStyle}`;
+  if (activeTexture === texture.id) {
+    buttonClasses += ' selected';
+  } else if (isMoovement) {
+    buttonClasses += ' deselected';
   }
 
   return (
     <div 
       onClick={handleClick} 
-      className={`${ButtonStyle} ${activeTexture === texture.id ? 'selected' : 'deselected'}`}
+      className={buttonClasses}
     >
       <div className="flex items-center mb-2">
         <div className="absolute top-5 left-5 w-10 h-10 rounded-full bg-gray-444444 -z-10"></div>
@@ -138,10 +150,12 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 export default function App() {
   const t = useTranslations('Home');
   
-  const [activeTexture, setActiveTexture] = useState(null); // 1 for texture1 and 2 for texture2
+  const [activeTexture, setActiveTexture] = useState(1); // 1 for texture1 and 2 for texture2
   const [scrollValue, setScrollValue] = useState(0);
   const [opacity, setOpacity] = useState(1);
   const buttonGroupRef = useRef(null);
+  const [isInteracting, setIsInteracting] = useState(false);
+
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMouseWithinFirstSection, setMouseWithinFirstSection] = useState(false);
@@ -152,100 +166,98 @@ export default function App() {
   const activeTextureData = texturesData.find(texture => texture.id === activeTexture);
 
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    setActiveTexture(null);
-  }
+    if (isInteracting) return; // stop the carousel if the user has interacted
 
-  window.addEventListener('click', handleClickOutside);
+    const intervalId = setInterval(() => {
+      setActiveTexture(prevTexture => prevTexture % texturesData.length + 1);
+    }, 4000);
 
-  return () => {
-    window.removeEventListener('click', handleClickOutside);
-  }
-}, []);
+    return () => clearInterval(intervalId); // cleanup on unmount or when dependencies change
+  }, [isInteracting]);
 
-useEffect(() => {
-  const handleMouseMove = (e) => {
-    
-    if (scrollValue === 0) {
-      setMouseWithinFirstSection(true);
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      
+      if (scrollValue === 0) {
+        setMouseWithinFirstSection(true);
 
-      const xRatio = (e.clientX / window.innerWidth) - 0.5;
-      const yRatio = (e.clientY / window.innerHeight) - 0.5;
-      setMousePosition({ x: xRatio, y: yRatio });
-    } else {
-      setMouseWithinFirstSection(false);
-    }
-  };
+        const xRatio = (e.clientX / window.innerWidth) - 0.5;
+        const yRatio = (e.clientY / window.innerHeight) - 0.5;
+        setMousePosition({ x: xRatio, y: yRatio });
+      } else {
+        setMouseWithinFirstSection(false);
+      }
+    };
 
-  window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove);
 
-  return () => {
-    window.removeEventListener('mousemove', handleMouseMove);
-  };
-}, [scrollValue]);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [scrollValue]);
 
   const selectedTitle = useMemo(() => {
     const texture = texturesData.find(t => t.id === activeTexture);
     return texture ? texture.title : '';
   }, [activeTexture]);
 
- useEffect(() => {
-  const currentRef = ref.current;
-  const handleScroll = () => {
+  useEffect(() => {
+    const currentRef = ref.current;
+    const handleScroll = () => {
+      if (currentRef) {
+        let scrollY = currentRef.scrollTop;
+        let height = currentRef.scrollHeight - currentRef.clientHeight;
+        let scrolled = height > 0 ? scrollY / height : 0;
+
+        setOpacity(1 - scrolled); // cela réduit l'opacité à mesure que vous défilez vers le bas
+        setScrollValue(currentRef.scrollTop);
+      }
+    };
+
     if (currentRef) {
-      let scrollY = currentRef.scrollTop;
-      let height = currentRef.scrollHeight - currentRef.clientHeight;
-      let scrolled = height > 0 ? scrollY / height : 0;
-
-      setOpacity(1 - scrolled); // cela réduit l'opacité à mesure que vous défilez vers le bas
-       setScrollValue(currentRef.scrollTop);
+      currentRef.addEventListener('scroll', handleScroll);
     }
-  };
 
-  if (currentRef) {
-    currentRef.addEventListener('scroll', handleScroll);
-  }
-
-  return () => {
-    if (currentRef) {
-      currentRef.removeEventListener('scroll', handleScroll);
-    }
-  };
-}, []);
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
 
  
 
   return (
     <div ref={ref} className="flex flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
       <Canvas 
-    camera={{ fov: 60 }} 
-    style={{
-      width: '100vw',
-      height: '100vh',
-      position: 'fixed',
-      top: 0,
-      zIndex: 20,
-      backgroundColor: 'transparent',
-      transition: 'all 0.3s ease',
-      pointerEvents: 'none'
-    }}
-  >
-    <ambientLight intensity={1.25} />
-    <directionalLight intensity={0.4} />
-    <Suspense fallback={null}>
-      {/*<Sun scrollValue={scrollValue} />*/}
-      
-      <Model activeTexture={activeTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
-    </Suspense>
-    <Environment preset="night" />
-    <AdaptiveDpr pixelated />
-    <AdaptiveEvents />
-    {/* <OrbitControls /> */}
-  </Canvas>
+        camera={{ fov: 60 }} 
+        style={{
+          width: '100vw',
+          height: '100vh',
+          position: 'fixed',
+          top: 0,
+          zIndex: 20,
+          backgroundColor: 'transparent',
+          transition: 'all 0.3s ease',
+          pointerEvents: 'none'
+        }}
+      >
+        <ambientLight intensity={1.25} />
+        <directionalLight intensity={0.4} />
+        <Suspense fallback={null}>
+          {/*<Sun scrollValue={scrollValue} />*/}
+          
+          <Model activeTexture={activeTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
+        </Suspense>
+        <Environment preset="night" />
+        <AdaptiveDpr pixelated />
+        <AdaptiveEvents />
+        {/* <OrbitControls /> */}
+      </Canvas>
 
       <div className="flex flex-col md:flex-row h-screen relative">
         <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
-          <h1 className="text-2xl lg:leading-[7.3rem] font-[600] font-museo md:text-4xl lg:text-9xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? t(activeTextureData.mainText) : t('title')}</h1>
+          <h1 className="text-2xl lg:leading-[7.3rem] font-[600] font-museo md:text-4xl lg:text-9xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? t(activeTextureData.mainText) : <></>}</h1>
           <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
         </div>
         <div className="w-full md:w-1/2 h-half md:h-screen relative">
@@ -259,6 +271,7 @@ useEffect(() => {
               texture={texture}
               setActiveTexture={setActiveTexture}
               activeTexture={activeTexture}
+              setIsInteracting={setIsInteracting} 
             />
           ))}
         </div>

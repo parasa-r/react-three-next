@@ -5,6 +5,10 @@
   "Home": {
     "title": "We create Apps !",
     "website": "Website",
-    "website-dev": "Website development"
+    "website-dev": "Website development",
+    "webapp-dev": "Webapp development",
+    "mobileapp-dev": "Mobile development",
+    "uiux3d-dev": "Interfaces & 3d models creation",
+    "ai-dev": "IA model creation"
   }
 }

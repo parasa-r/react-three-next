@@ -5,6 +5,10 @@
   "Home": {
     "title": "Nous créons des apps !",
     "website": "Sites Web",
-    "website-dev": "Développement de site Web"
+    "website-dev": "Développement de site Web",
+    "webapp-dev": "Webapp developpement",
+    "mobileapp-dev": "Mobile developpement",
+    "uiux3d-dev": "Création d'interface et modèle 3d",
+    "ai-dev": "Development de modèles d'IA"
   }
 }
