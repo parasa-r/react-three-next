@@ -97,21 +97,47 @@ const Sun = ({ scrollValue }) => {
     );
 };
 
-const IMacModel = ({mousePosition, modelPositionY, scrollValue}) => {
+const IMacModel = ({ mousePosition, scrollValue, isMouseWithinFirstSection }) => {
   const gltf = useLoader(GLTFLoader, "/imac_2021/scene.gltf");
-  const meshRef = useRef(); 
+  const meshRef = useRef();
 
-   useFrame(() => {
+  const initialRotation = { x: 0, y: 1.75, z: 0 };  // Define the initial rotation values
+
+  useFrame(() => {
     if (meshRef.current) {
-      // Pour s'assurer que l'iMac reste à sa position, compensez la valeur de défilement.
-      // Vous pouvez ajuster le multiplicateur 0.005 en fonction de vos besoins.
-      //console.log('hare', meshRef.current.position.y)
       meshRef.current.position.y = -100 + scrollValue * 0.5;
     }
   });
 
+  useEffect(() => {
+    if (isMouseWithinFirstSection && meshRef.current) {
+      gsap.to(meshRef.current.rotation, {
+        x: initialRotation.x + mousePosition.y * 0.05,  // Apply subtle rotation based on mouse position
+        y: initialRotation.y + mousePosition.x * 0.05,
+        duration: 0.5
+      });
+    }
+  }, [mousePosition, isMouseWithinFirstSection]);
+
+  useEffect(() => {
+    if (scrollValue && meshRef.current) {
+      gsap.to(meshRef.current.rotation, {
+        x: initialRotation.x,
+        y: initialRotation.y,
+        z: initialRotation.z,
+        duration: 0.5
+      });
+    }
+  }, [scrollValue]);
+
   return (
-    <primitive ref={meshRef} object={gltf.scene} position={[-200, -100, 300]} rotation={[0, 1.75, 0]} scale={3} />
+    <primitive 
+      ref={meshRef} 
+      object={gltf.scene} 
+      position={[-200, -100, 300]} 
+      rotation={[initialRotation.x, initialRotation.y, initialRotation.z]} 
+      scale={3} 
+    />
   );
 };
 
@@ -122,6 +148,7 @@ const Model = ({ activeTexture, scrollValue, mousePosition, isMouseWithinFirstSe
  const texture1 = useLoader(TextureLoader, '/textures/iPhone-14-Plus-deep-purple.jpg');
 const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 
+  // Define the initial rotation values
   const meshRef = useRef();
   camera.position.x = -1; 
   camera.position.z = -5; 
@@ -129,14 +156,14 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
   camera.lookAt(0, 0, 0); 
 
   useEffect(() => {
-    if (isMouseWithinFirstSection && meshRef.current) {
+    if ( meshRef.current) {
       gsap.to(meshRef.current.rotation, {
         x: mousePosition.y * 0.5,
         y: mousePosition.x * 0.5,
         duration: 0.5
       });
     }
-  }, [mousePosition, isMouseWithinFirstSection]);
+  }, [mousePosition]);
 
   useEffect(() => {
     if (!meshRef.current) return;
@@ -145,6 +172,7 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
     gsap.to(meshRef.current.rotation, { y: rotationValue, duration: 0.5 });
 
   }, [scrollValue]);
+
 
   useEffect(() => {
     if (activeTexture === null) return;
@@ -266,7 +294,7 @@ export default function App() {
         <Suspense fallback={null}>
           {/*<Sun scrollValue={scrollValue} />*/}
           <Model activeTexture={activeTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
-          <IMacModel mousePosition={mousePosition} scrollValue={scrollValue} modelPositionY={modelPositionY}/>
+          <IMacModel mousePosition={mousePosition} scrollValue={scrollValue} modelPositionY={modelPositionY}  isMouseWithinFirstSection={isMouseWithinFirstSection}/>
         </Suspense>
         <Environment preset="night" />
         <AdaptiveDpr pixelated />
