@@ -97,6 +97,35 @@ const Sun = ({ scrollValue }) => {
     );
 };
 
+const IMacModel = ({mousePosition, modelPositionY}) => {
+  const gltf = useLoader(GLTFLoader, "/imac_2021/scene.gltf");
+  const meshRef = useRef(); 
+
+   // Effet parallaxe
+  useEffect(() => {
+    gsap.to(meshRef.current.position, {
+      x: mousePosition.x * 10,  // Ajustez ces valeurs selon l'effet souhaité
+      y: mousePosition.y * 2,
+      duration: 0.5,
+      ease: "power2.out"
+    });
+  }, [mousePosition]);
+
+  // Effet de défilement
+  useEffect(() => {
+    gsap.to(meshRef.current.position, {
+      y: modelPositionY * 0.5, // Ajustez ce multiplicateur en fonction de vos besoins
+      duration: 0.5,
+      ease: "power2.out"
+    });
+  }, [modelPositionY]);
+
+
+  return (
+    <primitive ref={meshRef} object={gltf.scene} position={[0, 100, 300]} rotation={[0, Math.PI/2, 0]} scale={2} />
+  );
+};
+
 const Model = ({ activeTexture, scrollValue, mousePosition, isMouseWithinFirstSection }) => {
   const gltf = useLoader(GLTFLoader, "/scene.gltf");
   const { camera } = useThree();
@@ -105,7 +134,9 @@ const Model = ({ activeTexture, scrollValue, mousePosition, isMouseWithinFirstSe
 const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 
   const meshRef = useRef();
+  camera.position.x = -1; 
   camera.position.z = -5; 
+  
   camera.lookAt(0, 0, 0); 
 
   useEffect(() => {
@@ -142,7 +173,7 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 
   return (
     <>
-      <primitive ref={meshRef} object={gltf.scene} position={[-2, 0, 0]} scale={4} />
+      <primitive ref={meshRef} object={gltf.scene} position={[-3, 0, 0]} scale={4} />
 
     </>
   );
@@ -155,6 +186,8 @@ export default function App() {
   const [scrollValue, setScrollValue] = useState(0);
   const [opacity, setOpacity] = useState(1);
   const buttonGroupRef = useRef(null);
+  const [modelPositionY, setModelPositionY] = useState(0);
+    const sectionRef = useRef(null);
   const [isInteracting, setIsInteracting] = useState(false);
 
 
@@ -219,6 +252,17 @@ export default function App() {
       currentRef.addEventListener('scroll', handleScroll);
     }
 
+    if (sectionRef.current) {
+      const sectionTop = sectionRef.current.getBoundingClientRect().top;
+      const sectionBottom = sectionRef.current.getBoundingClientRect().bottom;
+
+      if (sectionTop <= 0 && sectionBottom >= 0) {
+        // Si nous sommes dans la première section
+        setModelPositionY(-sectionTop); // La valeur de déplacement est la distance du haut de la section à la vue du navigateur
+      }
+    }
+
+
     return () => {
       if (currentRef) {
         currentRef.removeEventListener('scroll', handleScroll);
@@ -231,32 +275,35 @@ export default function App() {
   return (
     <div ref={ref} className="flex flex-col h-screen bg-gray-100 overflow-y-auto dark:bg-black">
       <Canvas 
-        camera={{ fov: 60 }} 
-        style={{
-          width: '100vw',
-          height: '100vh',
-          position: 'fixed',
-          top: 0,
-          zIndex: 20,
-          backgroundColor: 'transparent',
-          transition: 'all 0.3s ease',
-          pointerEvents: 'none'
-        }}
-      >
-        <ambientLight intensity={1.25} />
-        <directionalLight intensity={0.4} />
-        <Suspense fallback={null}>
-          {/*<Sun scrollValue={scrollValue} />*/}
-          
-          <Model activeTexture={activeTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
-        </Suspense>
-        <Environment preset="night" />
-        <AdaptiveDpr pixelated />
-        <AdaptiveEvents />
-        {/* <OrbitControls /> */}
-      </Canvas>
+    camera={{ fov: 80 }} 
+    style={{
+      width: '100vw',
+      height: '100vh',
+      position: 'fixed',
+      top: 0,
+      zIndex: 20,
+      backgroundColor: 'transparent',
+      transition: 'all 0.3s ease',
+      pointerEvents: 'none'
+    }}
+  >
+    <ambientLight intensity={1.25} />
+    <directionalLight intensity={0.4} />
+    <Suspense fallback={null}>
+      {/*<Sun scrollValue={scrollValue} />*/}
+      
+      <Model activeTexture={activeTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
+      <IMacModel mousePosition={mousePosition} scrollValue={scrollValue} modelPositionY={modelPositionY}/>
+    </Suspense>
+    <Environment preset="night" />
+    <AdaptiveDpr pixelated />
+    <AdaptiveEvents />
+    {/* <OrbitControls /> */}
+  </Canvas>
 
-      <div className="flex flex-col md:flex-row h-screen relative">
+  
+
+      <div className="flex flex-col md:flex-row h-screen relative" ref={sectionRef}>
         <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
           <h1 className="text-2xl lg:leading-[6rem] font-[600] font-museo md:text-4xl lg:text-8xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? t(activeTextureData.mainText) : <></>}</h1>
           <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
