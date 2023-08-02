@@ -16,9 +16,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const texturesData = [
   { id: 1, title: "Mobile App", mainText: "website-dev", description: "Application \n Development \n Mobile", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faMobileScreen },
   { id: 2, title: "Web App", mainText: "webapp-dev", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", icon: faWindowMaximize },
-  { id: 2, title: "Website", mainText: "webapp-dev", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", icon: faStar },
-  { id: 3, title: "UI / UX / 3D", mainText: "uiux3d-dev", description: "Description 3", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
-  { id: 4, title: "Advanced AI", mainText: "ai-dev", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
+  { id: 3, title: "Website", mainText: "webapp-dev", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", icon: faStar },
+  { id: 4, title: "UI / UX / 3D", mainText: "uiux3d-dev", description: "Description 3", path: "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faMoon },
+  { id: 5, title: "Advanced AI", mainText: "ai-dev", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", icon: faTree },
 ];
   
 
