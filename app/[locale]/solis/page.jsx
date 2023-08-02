@@ -105,15 +105,16 @@ const IMacModel = ({ mousePosition, scrollValue, isMouseWithinFirstSection }) =>
 
   useFrame(() => {
     if (meshRef.current) {
-      meshRef.current.position.y = -100 + scrollValue * 0.5;
+      meshRef.current.position.y = -160 + scrollValue * 0.2;
+      meshRef.current.position.x = -50;
     }
   });
 
   useEffect(() => {
     if (isMouseWithinFirstSection && meshRef.current) {
       gsap.to(meshRef.current.rotation, {
-        x: initialRotation.x + mousePosition.y * 0.05,  // Apply subtle rotation based on mouse position
-        y: initialRotation.y + mousePosition.x * 0.05,
+        x: initialRotation.x + mousePosition.y * -0.05,  // Apply subtle rotation based on mouse position
+        y: initialRotation.y + mousePosition.x * -0.05,
         duration: 0.5
       });
     }
@@ -136,7 +137,7 @@ const IMacModel = ({ mousePosition, scrollValue, isMouseWithinFirstSection }) =>
       object={gltf.scene} 
       position={[-200, -100, 300]} 
       rotation={[initialRotation.x, initialRotation.y, initialRotation.z]} 
-      scale={3} 
+      scale={4} 
     />
   );
 };
@@ -145,20 +146,21 @@ const Model = ({ activeTexture, scrollValue, mousePosition, isMouseWithinFirstSe
   const gltf = useLoader(GLTFLoader, "/scene.gltf");
   const { camera } = useThree();
 
+ // bug si on enlève WTF ? 
  const texture1 = useLoader(TextureLoader, '/textures/iPhone-14-Plus-deep-purple.jpg');
-const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
+ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 
   // Define the initial rotation values
   const meshRef = useRef();
-  camera.position.x = -1; 
-  camera.position.z = -5; 
+  camera.position.x = -1;
+  camera.position.z = -5;
   
   camera.lookAt(0, 0, 0); 
 
   useEffect(() => {
     if ( meshRef.current) {
       gsap.to(meshRef.current.rotation, {
-        x: mousePosition.y * 0.5,
+        x: mousePosition.y * -0.5,
         y: mousePosition.x * 0.5,
         duration: 0.5
       });
@@ -169,7 +171,9 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
     if (!meshRef.current) return;
 
     const rotationValue = gsap.utils.mapRange(0, 1000, 0, Math.PI, scrollValue);
-    gsap.to(meshRef.current.rotation, { y: rotationValue, duration: 0.5 });
+    gsap.to(
+      meshRef.current.rotation, { y: rotationValue, duration: 0.5 }
+    );
 
   }, [scrollValue]);
 
@@ -190,7 +194,7 @@ const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
 
   return (
     <>
-      <primitive ref={meshRef} object={gltf.scene} position={[-3, 0, 0]} scale={4} />
+      <primitive ref={meshRef} object={gltf.scene} position={[-4, -0.4, 0]} scale={3.6} />
 
     </>
   );
@@ -283,6 +287,30 @@ export default function App() {
           height: '100vh',
           position: 'fixed',
           top: 0,
+          zIndex: 0,
+          backgroundColor: 'transparent',
+          transition: 'all 0.3s ease',
+          pointerEvents: 'none'
+        }}
+      >
+        <ambientLight intensity={1.25} />
+        <directionalLight intensity={0.4} />
+        <Suspense fallback={null}>
+          {/*<Sun scrollValue={scrollValue} />*/}
+          <IMacModel mousePosition={mousePosition} scrollValue={scrollValue} modelPositionY={modelPositionY}  isMouseWithinFirstSection={isMouseWithinFirstSection}/>
+        </Suspense>
+        <Environment preset="night" />
+        <AdaptiveDpr pixelated />
+        <AdaptiveEvents />
+        {/* <OrbitControls /> */}
+      </Canvas>
+      <Canvas 
+        camera={{ fov: 80 }} 
+        style={{
+          width: '100vw',
+          height: '100vh',
+          position: 'fixed',
+          top: 0,
           zIndex: 20,
           backgroundColor: 'transparent',
           transition: 'all 0.3s ease',
@@ -294,7 +322,6 @@ export default function App() {
         <Suspense fallback={null}>
           {/*<Sun scrollValue={scrollValue} />*/}
           <Model activeTexture={activeTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
-          <IMacModel mousePosition={mousePosition} scrollValue={scrollValue} modelPositionY={modelPositionY}  isMouseWithinFirstSection={isMouseWithinFirstSection}/>
         </Suspense>
         <Environment preset="night" />
         <AdaptiveDpr pixelated />
