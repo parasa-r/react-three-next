@@ -9,6 +9,12 @@
     "webapp-dev": "Webapp development",
     "mobileapp-dev": "Mobile development",
     "uiux3d-dev": "Interfaces & 3d models creation",
-    "ai-dev": "IA model creation"
+    "ai-dev": "IA model creation",
+    "website-dev-text": "We offer custom website development services to help you establish a strong and professional online presence. Our team of web development experts use the latest technologies to create static or dynamic websites with custom features. We accompany you from the conception to the completion of your project, offering regular follow-up and quality customer service. Contact us to learn more about our web development services.",
+    "webapp-dev-text": "Webapp development",
+    "mobileapp-dev-text": "Mobile development",
+    "uiux3d-dev-text": "Interfaces & 3d models creation",
+    "ai-dev-text": "IA model creation",
+    "technology": "Technology"
   }
 }
