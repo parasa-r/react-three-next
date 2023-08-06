@@ -27,7 +27,7 @@ export default async function RootLayout({children, params: {locale}}) {
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body>
+      <body className='bg-gray-100 dark:bg-black'>
         <NextIntlClientProvider locale={locale} messages={messages}>
             {/* To avoid FOUT with styled-components wrap Layout with StyledComponentsRegistry https://beta.nextjs.org/docs/styling/css-in-js#styled-components */}
             <Layout>{children}</Layout>

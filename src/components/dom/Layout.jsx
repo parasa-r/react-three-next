@@ -51,7 +51,7 @@ const Layout = ({ children }) => {
       className="relative overflow-auto touch-action-none"
     >
       <Curtain darkMode={darkMode}/>
-      <header className="flex justify-between items-center py-4 px-8 bg-gray-100 dark:bg-black">
+      <header className="flex justify-between items-center py-4 px-8 -z-10 ">
         <div className="flex items-center">
           {darkMode ? 
             <Image

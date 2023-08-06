@@ -130,7 +130,7 @@
   height: 700px;
   border-radius: 50%;
   /* rend l'élément rond */
-  background: #E4E4E4;
+  background: #ffd92f;
   animation: waveEffectIn 1s forwards;
   opacity: 1;
   z-index: -11;
