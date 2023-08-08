@@ -16,5 +16,9 @@
     "uiux3d-dev-text": "Interfaces & 3d models creation",
     "ai-dev-text": "IA model creation",
     "technology": "Technology"
+  },
+  "LocaleSwitcher": {
+    "label": "Change language",
+    "locale": "{locale, select, fr {French} en {English} other {Unknown}}"
   }
 }

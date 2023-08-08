@@ -32,8 +32,10 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-spring": "^9.7.2",
+    "react-tsparticles": "^2.12.1",
     "three": "^0.153.0",
     "three-stdlib": "^2.23.10",
+    "tsparticles": "^2.12.0",
     "tunnel-rat": "^0.1.2"
   },
   "devDependencies": {

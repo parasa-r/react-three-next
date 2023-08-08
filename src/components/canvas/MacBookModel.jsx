@@ -13,9 +13,9 @@ export const MacBookModel = ({ activeTexture, mousePosition, scrollValue, isMous
   texture.anisotropy = 16;
   texture.needsUpdate = true;
 
-  const initialPosition = { x: -2.2, y: -0.9, z: -2 };
+  const initialPosition = { x: -0.73, y: -0.25, z: -2 };
 
-  const initialRotation = { x: -0.2, y: 3.3, z: -0.06 };  // Define the initial rotation values
+  const initialRotation = { x: -0.2, y: 3.3, z: -0.035 };  // Define the initial rotation values
 
   useFrame(() => {
     // Frame update logic here if needed
@@ -93,7 +93,7 @@ export const MacBookModel = ({ activeTexture, mousePosition, scrollValue, isMous
       object={gltf.scene}
       position={[400, -350, -2]}
       rotation={[initialRotation.x, initialRotation.y, initialRotation.z]}
-      scale={5}
+      scale={0.9}
     />
   );
 };

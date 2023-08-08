@@ -13,35 +13,71 @@ import Image from 'next/image';
 import mac from '../../../public/assets/pngegg.png'
 import * as THREE from 'three';
 
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
+import PersonPictureButton from "@/components/buttons/PersonPictureButton";
+
 import {useTranslations} from 'next-intl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const texturesData = [
-  { id: 1, title: "Mobile App", mainText: "website-dev", description: "Application \n Development \n Mobile", path: "/textures/iPhone-14-Plus-deep-purple.jpg", macPath : "/textures/goutt.png", icon: faMobileScreen },
-  { id: 2, title: "Web App", mainText: "webapp-dev", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", macPath : "/textures/Wallpaper_baseColor.jpeg", icon: faWindowMaximize },
-  { id: 3, title: "Website", mainText: "webapp-dev", description: "Description 2", path: "/textures/Wallpaper_baseColor.jpeg", macPath : "/textures/iPhone-14-Plus-deep-purple.jpg", icon: faGlobe },
-  { id: 4, title: "UI / UX / 3D", mainText: "uiux3d-dev", description: "Description 3", path: "/textures/iPhone-14-Plus-deep-purple.jpg", macPath : "/textures/goutt.png", icon: faPaintBrush },
-  { id: 5, title: "Advanced AI", mainText: "ai-dev", description: "Description 4", path: "/textures/Wallpaper_baseColor.jpeg", macPath : "/textures/goutt.png", icon: faRobot },
+  { id: 1, path: "/textures/iPhone-14-Plus-deep-purple.jpg", macPath : "/textures/goutt.png"},
+  { id: 2, path: "/textures/Wallpaper_baseColor.jpeg", macPath : "/textures/Wallpaper_baseColor.jpeg"},
+  { id: 3, path: "/textures/Wallpaper_baseColor.jpeg", macPath : "/textures/iPhone-14-Plus-deep-purple.jpg"},
+  { id: 4, path: "/textures/iPhone-14-Plus-deep-purple.jpg", macPath : "/textures/goutt.png"},
+  { id: 5, path: "/textures/Wallpaper_baseColor.jpeg", macPath : "/textures/goutt.png"},
+  { id: 6, path: "/textures/aurelien2.jpg", macPath : "/textures/goutt.png"},
+  { id: 7, path: "/textures/aymeric2.png", macPath : "/textures/goutt.png"},
+  { id: 8, path: "/textures/romain.png", macPath : "/textures/goutt.png"},
+  { id: 9, path: "/textures/ozam4.png", macPath : "/textures/ozam2.png"},
 ];
+
+const services = [
+  { id: 1, title: "Mobile App", texture : 1 , mainText: "mobileApp-dev", description: "mobileApp-dev-text", icon: faMobileScreen },
+  { id: 2, title: "Web App", texture : 2 , mainText: "webapp-dev", description: "Description 2", icon: faWindowMaximize },
+  { id: 3, title: "Website", texture : 3 , mainText: "webapp-dev", description: "Description 2", icon: faGlobe },
+  { id: 4, title: "UI / UX / 3D", texture : 4 , mainText: "uiux3d-dev", description: "Description 3", icon: faPaintBrush },
+  { id: 5, title: "Advanced AI", texture : 5 , mainText: "ai-dev", description: "Description 4", icon: faRobot },
+];
+
+const people = [
+  { id: 1, title: "Chief Marketing Officier", texture : 6 , name: "Aurélien Santi"},
+  { id: 2, title: "Chief Technology Officier", texture : 7 , name: "Aymeric Sarrasin"},
+  { id: 3, title: "Chief Executive Officier", texture : 8 , name: "Romain Darioli"},
+];
+
+
+  /*const activeTexturesData = services.map(service => ({
+  id: service.texture,
+  path: texturesData.find(texture => texture.id === service.texture).path
+}));*/
   
 
-const ButtonStyle = "bg-white button bg-opacity-50 dark:bg-opacity-80 rounded-4xl p-5 m-2 cursor-pointer transition transition-transform  duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:-translate-y-4 hover:bg-opacity-80";
-function TextureButton({ texture, setActiveTexture, activeTexture, setIsInteracting }) {
+const ButtonStyle = "bg-white  button bg-opacity-50 dark:bg-opacity-80 rounded-4xl p-5 m-2 mb-10 cursor-pointer transition transition-transform  duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee dark:border-gray-444444 hover:-translate-y-4 hover:bg-opacity-80";
+
+
+function TextureButton({ texture, setActiveTexture, activeTexture, setIsInteracting, section, setSelectedService }) {
+  const isServiceButton = section === 'services';
   let isMoovement = false;
+
+  let isActive = false;
 
 
   const handleClick = (event) => {
     event.stopPropagation();
     setActiveTexture(texture.id);
-    setIsInteracting(true); 
+    setIsInteracting(true);
+    setSelectedService(texture);
     isMoovement = true;
   }
   
   let buttonClasses = `${ButtonStyle}`;
   if (activeTexture === texture.id) {
     buttonClasses += ' selected';
+    isActive = true;
   } else if (isMoovement) {
     buttonClasses += ' deselected';
+    isActive = false;
   }
 
   return (
@@ -49,239 +85,39 @@ function TextureButton({ texture, setActiveTexture, activeTexture, setIsInteract
       onClick={handleClick} 
       className={buttonClasses}
     >
-      <div className="flex items-center mb-2">
-        <div className="absolute top-5 left-5 w-10 h-10 rounded-full bg-gray-444444 -z-10"></div>
+      <div className="flex items-center">
+        <div className={`absolute top-5 left-5 w-10 h-10 rounded-full  -z-10 ${isActive ? ' bg-white ' : ' bg-fuchsia-600  '}`}></div>
         <div className="w-10 h-10 flex items-center justify-center">
-          <FontAwesomeIcon icon={texture.icon} size="1x" className=" absolute mr-0 text-white  ml-0 mt-0 text-[1rem]" />
+          <FontAwesomeIcon icon={texture.icon} size="1x" className={`absolute mr-0  ml-0 mt-0 text-[1rem] ${isActive ? ' text-fuchsia-600 ' : ' text-white'}`}/>
         </div>
         
-        <h2 className="text-lg ml-2 font-sans text-neutral-600 font-[600]">{texture.title}</h2>
+        <h2 className={`text-lg ml-2 font-sans  font-[600] ${isActive ? ' text-white ' : ' text-neutral-600 '}`}>{texture.title}</h2>
       </div>
-      <p className="font-sans text-sm text-neutral-600">{texture.description}</p>
+      {/*<p className="font-sans text-sm text-neutral-600">{texture.description}</p>*/}
     </div>
   );
 }
 
 import { TextureLoader} from "three";
-const clock = new Clock();
-/*const Sun = ({ scrollValue }) => {
-    const meshRef = useRef();
-
-  useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.002;
-
-      const time = clock.getElapsedTime();
-      const positions = meshRef.current.geometry.attributes.position;
-      
-      for (let i = 0; i < positions.count; i++) {
-          const px = positions.getX(i);
-          const py = positions.getY(i);
-          const pz = positions.getZ(i);
-
-          const len = Math.sqrt(px*px + py*py + pz*pz);
-          const offset = 0.5 * Math.sin(len + time);
-          
-          const ratio = (3 + offset) / len;
-          positions.setXYZ(i, px*ratio, py*ratio, pz*ratio);
-      }
-
-      positions.needsUpdate = true;
-      meshRef.current.geometry.computeVertexNormals();
-    }
-  });
-
-  return (
-      <mesh ref={meshRef} position={[0, scrollValue * 0.005, 5]} rotation={[0, 0, Math.PI / 2]}>
-          <sphereBufferGeometry attach="geometry" args={[3, 32, 32]} />
-          <MeshDistortMaterial roughness={10} color={'orange'} />
-      </mesh>
-  );
-};*/
-
-/*const IMacModel = ({ mousePosition, scrollValue, isMouseWithinFirstSection }) => {
-  const gltf = useLoader(GLTFLoader, "/imac_2021/scene.gltf");
-  const meshRef = useRef();
-
-  const initialRotation = { x: 0, y: 1.75, z: 0 };  // Define the initial rotation values
-
-  useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.position.y = -160 + scrollValue * 0.2;
-      meshRef.current.position.x = -50;
-    }
-  });
-
-  useEffect(() => {
-    if (isMouseWithinFirstSection && meshRef.current) {
-      gsap.to(meshRef.current.rotation, {
-        x: initialRotation.x + mousePosition.y * -0.05,  // Apply subtle rotation based on mouse position
-        y: initialRotation.y + mousePosition.x * -0.05,
-        duration: 0.5
-      });
-    }
-  }, [mousePosition, isMouseWithinFirstSection]);
-
-  useEffect(() => {
-    if (scrollValue && meshRef.current) {
-      gsap.to(meshRef.current.rotation, {
-        x: initialRotation.x,
-        y: initialRotation.y,
-        z: initialRotation.z,
-        duration: 0.5
-      });
-    }
-  }, [scrollValue]);
-
-  return (
-    <primitive 
-      ref={meshRef} 
-      object={gltf.scene} 
-      position={[-200, -100, 300]} 
-      rotation={[initialRotation.x, initialRotation.y, initialRotation.z]} 
-      scale={4} 
-    />
-  );
-};*/
-
-
-/*const IMacModel2 = ({ scrollValue, mousePosition, isMouseWithinFirstSection }) => {
-  const gltf = useLoader(GLTFLoader, "/imacmodel/scene.gltf");  // replace with your actual imacmodel file path
-  const meshRef = useRef();
-
-  const initialRotation = { x: 0, y: 1.75, z: 0 };  // Define the initial rotation values
-
-  useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.position.y = -160 + scrollValue * 0.2;
-      meshRef.current.position.x = -50;
-    }
-  });
-
-  useEffect(() => {
-    if (isMouseWithinFirstSection && meshRef.current) {
-      gsap.to(meshRef.current.rotation, {
-        x: initialRotation.x + mousePosition.y * -0.05,  // Apply subtle rotation based on mouse position
-        y: initialRotation.y + mousePosition.x * -0.05,
-        duration: 0.5
-      });
-    }
-  }, [mousePosition, isMouseWithinFirstSection]);
-
-  useEffect(() => {
-    if (scrollValue && meshRef.current) {
-      gsap.to(meshRef.current.rotation, {
-        x: initialRotation.x,
-        y: initialRotation.y,
-        z: initialRotation.z,
-        duration: 0.5
-      });
-    }
-  }, [scrollValue]);
-
-  return (
-    <primitive 
-      ref={meshRef} 
-      object={gltf.scene} 
-      position={[-200, -100, 300]} 
-      rotation={[initialRotation.x, initialRotation.y, initialRotation.z]} 
-      scale={4} 
-    />
-  );
-};*/
 
 
 
 import {MacBookModel}  from "../../../src/components/canvas/MacBookModel"
 
-
-
-
-const Model = ({ activeTexture, scrollValue, mousePosition, isMouseWithinFirstSection }) => {
-  const gltf = useLoader(GLTFLoader, "/scene.gltf");
-  const { camera } = useThree();
-
- // bug si on enlève WTF ?
- const texture1 = useLoader(TextureLoader, '/textures/iPhone-14-Plus-deep-purple.jpg');
- const texture2 = useLoader(TextureLoader, '/textures/Wallpaper_baseColor.jpeg');
-
- const initialPosition = { x: -1.1, y: -0.20, z: -3 };
-
-  // Define the initial rotation values
-  const meshRef = useRef();
-  camera.position.x = -1;
-  camera.position.z = -5;
-  
-  camera.lookAt(0, 0, 0); 
-
-
-  useEffect(() => {
-    if ( meshRef.current) {
-      gsap.to(meshRef.current.rotation, {
-        x: mousePosition.y * -0.15,
-        y: mousePosition.x * 0.55,
-        duration: 0.5
-      });
-    }
-  }, [mousePosition]);
-
-  useFrame(() => {
-  });
-
-  useEffect(() => {
-    if (meshRef.current) {
-      meshRef.current.position.x = initialPosition.x;
-      meshRef.current.position.y = initialPosition.y;
-      meshRef.current.position.z = initialPosition.z;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!meshRef.current) return;
-
-    const rotationValue = gsap.utils.mapRange(0, 1000, 0, Math.PI, scrollValue);
-    gsap.to(
-      meshRef.current.rotation, { 
-        y: rotationValue, 
-        duration: 0.5 
-      }
-    );
-
-    gsap.to(meshRef.current.position, {
-      z: Math.max(initialPosition.z + scrollValue * -0.01, -4), // stop zoom at -4
-      x: Math.max(initialPosition.x + scrollValue * -0.01, -1.5),
-      duration: 0.5,
-      ease: "power1.out",
-    });
-
-
-  }, [scrollValue]);
-
-
-  useEffect(() => {
-    if (activeTexture === null) return;
-
-    const textureToApply = useLoader(TextureLoader, texturesData[activeTexture - 1].path);
-
-    gltf.scene.traverse((child) => {
-      if (child.isMesh && child.name === 'Body_Wallpaper_0') {
-        child.material.map = textureToApply;
-        child.material.roughness = 2;
-        child.material.needsUpdate = true;
-      }
-    });
-  }, [activeTexture]);
-
-  return (
-    <>
-      <primitive ref={meshRef} object={gltf.scene} position={[-4, -0.4, 0]} scale={1} />
-    </>
-  );
-};
+import { IphoneModel } from "@/components/canvas/IphoneModel";
 
 
 
 
+
+
+
+
+
+
+
+
+//__________________
 
 
 export default function App() {
@@ -297,19 +133,63 @@ export default function App() {
   const [isMouseWithinFirstSection, setMouseWithinFirstSection] = useState(false);
   const ref = useRef()
   const activeTextureData = texturesData.find(texture => texture.id === activeTexture);
+  const [selectedService, setSelectedService] = useState(services[0]);
+
+  const [activePersonTexture, setActivePersonTexture] = useState(1);
+
+  
+
+
+  const section1Ref = useRef(null);
+  const [isInSection1, setIsInSection1] = useState(false);
+
+  const section2Ref = useRef(null);
+  const [isInSection2, setIsInSection2] = useState(false);
+
+  const section3Ref = useRef(null);
+  const [isInSection3, setIsInSection3] = useState(false);
+
+  const texture1 = useLoader(TextureLoader, texturesData[0].path);
+  const texture2 = useLoader(TextureLoader, texturesData[1].path);
+  const texture3 = useLoader(TextureLoader, texturesData[2].path);
+  const texture4 = useLoader(TextureLoader, texturesData[3].path);
+  const texture5 = useLoader(TextureLoader, texturesData[4].path);
+  const texture6 = useLoader(TextureLoader, texturesData[5].path);
+  const texture7 = useLoader(TextureLoader, texturesData[6].path);
+  const texture8 = useLoader(TextureLoader, texturesData[7].path);
+
+
+  const lightRef = useRef();
 
 
   const yellowCircleRef = useRef();
+  const bgCircle2Ref = useRef();
+
+
+    const particlesInit = useCallback(async engine => {
+        console.log(engine);
+        // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
+        // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
+        // starting from v2 you can add only the features you need reducing the bundle size
+        await loadFull(engine);
+    }, []);
+
+    const particlesLoaded = useCallback(async container => {
+        await console.log(container);
+    }, []);
 
   useEffect(() => {
     if (isInteracting) return; // stop the carousel if the user has interacted
 
     const intervalId = setInterval(() => {
-      setActiveTexture(prevTexture => prevTexture % texturesData.length + 1);
+      if(isInSection1) {
+        setActiveTexture(prevTexture => prevTexture % texturesData.length + 1);
+      }
     }, 4000);
 
     return () => clearInterval(intervalId); // cleanup on unmount or when dependencies change
   }, [isInteracting]);
+  
 
   /*useEffect(() => {
     gsap.to(yellowCircleRef.current, {
@@ -322,7 +202,63 @@ export default function App() {
     });
 }, []);*/
 
-  
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.5, // 0.5 means when at least 50% of the section is visible
+    };
+
+    const observer1 = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        setIsInSection1(entry.isIntersecting);
+      });
+    }, options);
+
+    const observer2 = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        setIsInSection2(entry.isIntersecting);
+      });
+    }, options);
+
+    const observer3 = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        setIsInSection3(entry.isIntersecting);
+      });
+    }, options);
+
+    if (sectionRef.current) {
+      observer1.observe(sectionRef.current);
+    }
+
+    if (section2Ref.current) {
+      observer2.observe(section2Ref.current);
+    }
+
+    if (section3Ref.current) {
+      observer3.observe(section3Ref.current);
+    }
+
+    return () => {
+      if (section1Ref.current) {
+        observer1.unobserve(section1Ref.current);
+      }
+      if (section2Ref.current) {
+        observer2.unobserve(section2Ref.current);
+      }
+      if (section3Ref.current) {
+        observer3.unobserve(section3Ref.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (lightRef.current) {
+      lightRef.current.target.position.set(-4, 0, -0.95);
+      lightRef.current.target.updateMatrixWorld();
+    }
+  }, []);
+
 
   useEffect(() => {
     const currentRef = ref.current;
@@ -343,6 +279,14 @@ export default function App() {
           duration: 0.5,
           ease: 'linear',
         });
+
+        gsap.to(bgCircle2Ref.current, {
+          x: `${scrollY * -0.6}px`,
+          y: `${-scrollY * 0.3}px`, // change 0.5 to control the speed of parallax
+          //rotation: `${scrollY * 0.02}deg`, // change 0.02 to control the speed of rotation, uncomment this if you want to rotate the div and have the necessary wrapper or plugin
+          duration: 0.5,
+          ease: 'linear',
+        });
       }
     };
     if (currentRef) {
@@ -353,7 +297,7 @@ export default function App() {
         currentRef.removeEventListener('scroll', handleScroll);
       }
     };
-}, []);
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -414,16 +358,77 @@ export default function App() {
 
   return (
     <div ref={ref} className="flex flex-col h-screen overflow-y-auto ">
-    <div ref={yellowCircleRef} className="fixed w-[500px] h-[500px] blur-xl bg-[#ffd92f] rounded-[999999px] -z-10 top-[140px] -left-[300px]"></div>
+    <div ref={yellowCircleRef} className="fixed w-[500px] h-[500px] blur-xl bg-neutral-300 dark:bg-[#292929] rounded-[999999px] -z-10 top-[140px] -left-[300px]"></div>
+    <div ref={bgCircle2Ref} className="fixed w-[500px] h-[500px] blur-xl bg-fuchsia-100 dark:bg-[#1e0320] rounded-[999999px] -z-10 top-[840px] -right-[300px]"></div>
+    <Particles
+            id="tsparticles"
+            init={particlesInit}
+            loaded={particlesLoaded}
+            options={{
+                background: {
+                },
+                fpsLimit: 120,
+                interactivity: {
+                    events: {
+                        onClick: {
+                            enable: false,
+                            mode: "push",
+                        },
+                        resize: true,
+                    },
+                    modes: {
+                        push: {
+                            quantity: 4,
+                        },
+                        repulse: {
+                            distance: 200,
+                            duration: 0.4,
+                        },
+                    },
+                },
+                particles: {
+                    color: {
+                        value: "#c026d3",
+                    },
+                    move: {
+                        direction: "none",
+                        enable: true,
+                        outModes: {
+                            default: "bounce",
+                        },
+                        random: false,
+                        speed: 1,
+                        straight: false,
+                    },
+                    number: {
+                        density: {
+                            enable: true,
+                            area: 800,
+                        },
+                        value: 5,
+                    },
+                    opacity: {
+                        value: 0.5,
+                    },
+                    shape: {
+                        type: "circle",
+                    },
+                    size: {
+                        value: { min: 1, max: 5 },
+                    },
+                },
+                detectRetina: true,
+            }}
+        />
 
           
       {activeTexture === 2 ? 
         <></>
         :<></>
       }
-
+    <Suspense fallback={<div>Loading...</div>}>
       <Canvas
-        camera={{ fov: 80 }} 
+        camera={{ fov: 14 }} 
         style={{
           width: '100vw',
           height: '100vh',
@@ -435,46 +440,94 @@ export default function App() {
           pointerEvents: 'none'
         }}
       >
-        <ambientLight intensity={1.25} />
-        <directionalLight intensity={0.4} />
+        <ambientLight intensity={0.25}  position={[-4, 0, 1]} />
+        <directionalLight intensity={0.4}  position={[-4, 0, 1]} />
+        <directionalLight intensity={2.5}  position={[-4, 0, -1]}   ref={lightRef}/>
         <Suspense fallback={null}>
           {/*<Sun scrollValue={scrollValue} />*/}
           <MacBookModel activeTexture={activeTexture} texturesData={texturesData} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
-          <Model activeTexture={activeTexture}  scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection} />
+          <IphoneModel activeTexture={activeTexture} texturesData={texturesData} isInSection1={isInSection1} isInSection2={isInSection2} isInSection3={isInSection3}  setActiveTexture={setActiveTexture} scrollValue={scrollValue} mousePosition={mousePosition} isMouseWithinFirstSection={isMouseWithinFirstSection}/>
         </Suspense>
         <Environment preset="night" />
         <AdaptiveDpr pixelated />
         <AdaptiveEvents />
         {/* <OrbitControls /> */}
       </Canvas>
-      <div className="flex flex-col md:flex-row h-screen relative" ref={sectionRef}>
-        <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
-          <h1 className="text-2xl lg:leading-[6rem] font-[600] font-museo md:text-4xl lg:text-8xl font-bold mb-4 text-gray-444444 dark:text-white">{activeTextureData ? t(activeTextureData.mainText) : <></>}</h1>
-          <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">High-end applications for companies that think big - your success is our priority.</p>
+    </Suspense>
+      <div className="flex flex-col md:flex-row h-screen relative mb-[500px] -mt-20" ref={sectionRef}>
         
-          <div className="text-xl mb-4 md:mb-6 lg:text-2xl font-[600] text-gray-600 dark:text-gray-300">
+        <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center h-half md:h-full">
+          <h1 ref={section1Ref} className="text-2xl lg:leading-[6rem] font-[600] font-museo md:text-4xl lg:text-8xl font-bold mb-4 text-gray-444444 dark:text-white">{selectedService ? t(selectedService.mainText) : <></>}</h1>
+          <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">{selectedService ? t(selectedService.description) : <></>}</p>
+        
+          <div  className="text-xl mb-4 md:mb-6 lg:text-2xl font-[600] text-gray-600 dark:text-gray-300">
             {t("technology")}
           </div>
         </div>
         <div className="w-full md:w-1/2 h-half md:h-screen relative">       
         </div>
-        <div ref={buttonGroupRef} style={{ opacity: opacity }} className="absolute bottom-4 pt-4 md:bottom-20 right-4 md:right-20 flex space-x-4 md:space-x-10 z-30 overflow-x-auto">
-          {texturesData.map(texture => (
+        <div ref={buttonGroupRef} style={{ opacity: opacity }} className="absolute bottom-4 pt-4  right-4 md:right-20 flex space-x-4 md:space-x-10 z-30 overflow-x-auto">
+          {services.map(service => (
             <TextureButton
-              key={`text_${texture.id}`}
-              texture={texture}
+              key={`text_${service.id}`}
+              texture={service}
               setActiveTexture={setActiveTexture}
               activeTexture={activeTexture}
-              setIsInteracting={setIsInteracting} 
+              setIsInteracting={setIsInteracting}
+              section="services"
+              setSelectedService={setSelectedService}
             />
           ))}
         </div>
       </div>
+
       {/* New Section: Our story */}
-      <div className="flex flex-col items-center py-16 md:py-32 bg-gray-200 z-0">
-        <h2 className="text-3xl md:text-5xl font-bold mb-8">Our Story</h2>
-        <p className="text-lg md:text-xl lg:text-2xl mb-6 max-w-3xl text-center">From our humble beginnings...</p>
+      <div className="flex md:h-full mb-[300px]">
+        <div className="p-4 md:p-8 basis-1/2  flex flex-col justify-center h-half md:h-full mb-[300px]">
+          <h2 className="text-2xl lg:leading-[6rem] font-[600] font-museo md:text-4xl lg:text-8xl font-bold mb-4 text-gray-444444 dark:text-white">Our Story</h2>
+          <p className="text-lg mb-4 md:mb-6 lg:text-xl text-gray-600 dark:text-gray-300">Aurélien and Aymeric, passionate about technology met while studying computer science in Switzerland and quickly started collaborating on innovative personal projects. Observing the market dominated by standardized solutions, they created their own high-end IT development company offering customized services to meet the specific needs of each client. Their company uses the most advanced technologies to deliver innovative custom solutions to companies seeking to address complex challenges.</p>
+        </div>
+        <div className="p-4 md:p-8 pt-48 md:pt-48 basis-1/2 mjustify-center ">
+          <div className="flex flex-row bg-neutral-600 rounded-5xl">
+            <div className="p-4 md:p-8 flex basis-1/2 flex-col  justify-center  ">
+
+            <h2 className="text-2xl lg:leading-[6rem] font-[600] font-museo md:text-4xl lg:text-5xl font-bold mb-4 text-white dark:text-gray-444444">
+              Direction
+            </h2>
+
+            {people.map(person => (
+              <PersonPictureButton
+                key={`person_${person.id}`}
+                person={person}
+                texture={"person"}
+                setActiveTexture={setActiveTexture}
+                activeTexture={activeTexture}
+                isActive={activePersonTexture === person.id}
+                setActive={setActivePersonTexture}
+              />
+            ))}
+
+            <div ref={section2Ref} className="text-xl mt-16 text-center p-3 bg-white button bg-opacity-50 dark:bg-opacity-80  cursor-pointer rounded-full font-[600] font-museo md:text-base lg:text-xl font-bold mb-4 text-gray-444444 dark:text-white transition transition-transform  duration-200 ease-in-out transform backdrop-blur-sm border border-gray-eeeeee hover:-translate-y-4 hover:bg-opacity-80">
+              Team price
+            </div>
+
+          </div>
+          </div>
+          
+        </div>
       </div>
+
+      <div ref={section3Ref}>
+        <div className="p-4 md:p-8 flex flex-col justify-center h-half md:h-full mb-[300px]">
+          <h2 className="text-2xl lg:leading-[6rem] font-[600] font-museo md:text-4xl lg:text-8xl font-bold mb-4 text-gray-444444 dark:text-white">
+            
+            </h2>
+          </div>
+
+      </div>
+
+
+      
     </div>
   );
 }

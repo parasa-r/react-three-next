@@ -7,7 +7,8 @@
     "website": "Sites Web",
     "website-dev": "Développement de site Web",
     "webapp-dev": "Webapp developpement",
-    "mobileapp-dev": "Mobile developpement",
+    "mobileApp-dev": "Mobile developpement",
+    "mobileApp-dev-text": "Chez Solis, nous nous spécialisons dans la création d'applications mobiles sur mesure. Notre équipe d'experts travaille étroitement avec vous pour comprendre vos besoins et transformer votre vision en une application mobile fonctionnelle et attrayante. Que vous soyez une startup cherchant à innover ou une entreprise établie souhaitant étendre votre offre, nous offrons des solutions complètes qui incluent la conception, le développement, et l'optimisation pour iOS et Android.",
     "uiux3d-dev": "Création d'interface et modèle 3d",
     "ai-dev": "Development de modèles d'IA",
     "website-dev-text": "We offer custom website development services to help you establish a strong and professional online presence. Our team of web development experts use the latest technologies to create static or dynamic websites with custom features. We accompany you from the conception to the completion of your project, offering regular follow-up and quality customer service. Contact us to learn more about our web development services.",
@@ -16,5 +17,9 @@
     "uiux3d-dev-text": "Interfaces & 3d models creation",
     "ai-dev-text": "IA model creation",
     "technology": "Technologies"
+  },
+  "LocaleSwitcher": {
+    "label": "Changer de langue",
+    "locale": "{locale, select, fr {Français} en {Anglais} other {Unknown}}"
   }
 }
